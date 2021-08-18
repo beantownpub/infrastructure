@@ -5,7 +5,7 @@ env ?= dev
 var_file = ${PWD}/modules/vpc/vpc.tfvars
 
 init:
-		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) init
+		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) init -backend-config=backend.hcl
 
 plan:
 		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) plan
