@@ -2,10 +2,9 @@ version: 3
 projects:
 - dir: dev
   workspace: dev
-  workflow: wtf
 
 workflows:
-  wtf:
+  dev:
     plan:
       steps:
       - env:
