@@ -4,3 +4,4 @@ projects:
   workspace: dev
 - dir: prod
   workspace: prod
+workflow: setup_workspace
