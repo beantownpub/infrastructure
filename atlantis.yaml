@@ -2,11 +2,3 @@ version: 3
 projects:
 - dir: dev
   workspace: dev
-
-workflows:
-  dev:
-    plan:
-      steps:
-      - env:
-          name: TF_WORKSPACE
-          command: 'echo "$WORKSPACE"'
