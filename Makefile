@@ -13,3 +13,6 @@ apply:
 
 destroy:
 		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) destroy
+
+clean:
+		rm -rf $(env)/.terraform || true

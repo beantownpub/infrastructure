@@ -19,7 +19,7 @@ variable "azs" {
 variable "cidr" {
   description = "CIDR network space for VPC"
   type = string
-  default = "172.0.0.0/16"
+  default = "10.0.0.0/16"
 }
 
 variable "region" {
@@ -43,11 +43,11 @@ variable "enable_vpn_gateway" {
 variable "public_subnets" {
   description = "Public subnets"
   type = list
-  default = ["172.0.101.0/24"]
+  default = ["10.0.101.0/24"]
 }
 
 variable "private_subnets" {
   description = "Private subnets"
   type = list
-  default = ["172.0.1.0/24"]
+  default = ["10.0.1.0/24"]
 }
