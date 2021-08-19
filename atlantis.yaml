@@ -2,3 +2,5 @@ version: 3
 projects:
 - dir: dev
   workspace: dev
+- dir: prod
+  workspace: prod
