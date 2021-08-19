@@ -49,5 +49,5 @@ variable "public_subnets" {
 variable "private_subnets" {
   description = "Private subnets"
   type = list
-  default = ["172.0.101.0/24"]
+  default = ["172.0.1.0/24"]
 }
