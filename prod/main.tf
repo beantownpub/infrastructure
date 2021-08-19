@@ -4,7 +4,7 @@ terraform {
     organization = "beantown"
 
     workspaces {
-      name = "prod"
+      prefix = "prod-"
     }
   }
 }
