@@ -1,4 +1,5 @@
 provider "aws" {
+  alias                       = "localstack"
   access_key                  = "test"
   secret_key                  = "test"
   region                      = "us-east-1"
