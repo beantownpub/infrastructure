@@ -2,6 +2,6 @@ version: 3
 projects:
 - dir: dev
   workspace: dev
+  workflow: setup_workspace
 - dir: prod
   workspace: prod
-workflow: setup_workspace
