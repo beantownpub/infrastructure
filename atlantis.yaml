@@ -2,3 +2,12 @@ version: 3
 projects:
 - dir: dev
   workspace: dev
+  workflow: wtf
+
+workflows:
+  wtf:
+    plan:
+      steps:
+      - env:
+          name: TF_WORKSPACE
+          command: 'echo "$WORKSPACE"'
