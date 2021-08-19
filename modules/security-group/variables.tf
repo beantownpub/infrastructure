@@ -7,7 +7,6 @@ variable "name" {
 variable "description" {
   description = "Name of the security-group"
   type = string
-  default = "what the fuck?"
 }
 
 variable "vpc_id" {
