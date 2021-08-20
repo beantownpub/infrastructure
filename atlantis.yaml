@@ -1,8 +1,7 @@
 version: 3
-parallel_plan: false
+parallel_plan: true
 projects:
 - dir: dev
   workspace: dev
-  workflow: setup_workspace
 - dir: prod
   workspace: prod
