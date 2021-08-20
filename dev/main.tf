@@ -17,6 +17,6 @@ module "vpc" {
 module "web_sg" {
   source = "../modules/security-group/"
   name = "web-sg"
-  description = "fuck you asshole"
+  description = "Security group for web ingress"
   vpc_id = module.vpc.vpc_id
 }
