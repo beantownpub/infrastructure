@@ -6,7 +6,7 @@ init:
 		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) init -input=false
 
 plan:
-		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) plan -lock=false
+		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) plan
 
 apply:
 		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) apply
