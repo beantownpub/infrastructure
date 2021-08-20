@@ -1,4 +1,9 @@
 terraform {
+  required_providers {
+    aws = {
+      version = "3.54.0"
+    }
+  }
   backend "remote" {
     hostname = "app.terraform.io"
     organization = "beantown"
