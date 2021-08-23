@@ -22,7 +22,7 @@ workflows:
       - init
       - env:
           name: TF_WORKSPACE
-          value: dev
+          value:
           # command: echo 'dev'
       - init
       - run: |
