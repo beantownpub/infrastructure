@@ -23,6 +23,7 @@ workflows:
           pwd
           ls -al
           rm -rf .terraform
+      - run: terraform workspace select dev
       - init
       - env:
           name: TF_WORKSPACE
