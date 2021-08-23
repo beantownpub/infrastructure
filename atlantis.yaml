@@ -21,7 +21,7 @@ workflows:
       steps:
       - env:
           name: TF_WORKSPACE
-          value:
+          value: dev
           # command: echo 'dev'
       - init:
       - run: |
