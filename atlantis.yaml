@@ -5,13 +5,13 @@ projects:
   workspace: dev
   autoplan:
     enabled: true
-    when_modified: ["dev/*.tf*"]
+    when_modified: ["**/*.tf*"]
 - dir: prod
   name: prod
   workspace: prod
   autoplan:
     enabled: true
-    when_modified: ["prod/*.tf*"]
+    when_modified: ["**/*.tf*"]
   workflow: wtf
 
 workflows:
