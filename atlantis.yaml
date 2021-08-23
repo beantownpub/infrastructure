@@ -6,6 +6,7 @@ projects:
   autoplan:
     enabled: true
     when_modified: ["**/*.tf*"]
+  workflow: wtf
 - dir: prod
   name: prod
   workspace: prod
@@ -20,6 +21,6 @@ workflows:
       steps:
       - env:
           name: TF_WORKSPACE
-          command: echo 'prod'
+          command: echo 'dev'
       - init
       - plan
