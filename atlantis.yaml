@@ -19,11 +19,12 @@ workflows:
   wtf:
     plan:
       steps:
+      - init
       - env:
           name: TF_WORKSPACE
           value: dev
           # command: echo 'dev'
-      - init:
+      - init
       - run: |
           unset TF_WORKSPACE
           terraform workspace select dev -no-color
