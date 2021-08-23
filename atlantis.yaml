@@ -20,12 +20,6 @@ workflows:
     plan:
       steps:
       - run: |
-          pwd
-          ls -al
-          env
-      - init:
-          extra_args: [-reconfigure]
-      - env:
-          name: TF_WORKSPACE
-          command: echo 'dev'
-      - plan
+          terraform init -input=false -no-color
+          terraform workspace select -no-color dev
+          terraform plan -input=false -refresh -no-color -out $PLANFILE
