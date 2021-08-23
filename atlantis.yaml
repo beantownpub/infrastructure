@@ -2,14 +2,14 @@ version: 3
 projects:
 - dir: dev
   name: dev
-  workspace: dev
+  workspace: jal-dev
   autoplan:
     enabled: true
     when_modified: ["**/*.tf*"]
   workflow: wtf
 - dir: prod
   name: prod
-  workspace: prod
+  workspace: jal-prod
   autoplan:
     enabled: true
     when_modified: ["**/*.tf*"]
