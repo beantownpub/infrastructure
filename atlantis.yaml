@@ -19,8 +19,12 @@ workflows:
   wtf:
     plan:
       steps:
+      - run: |
+          pwd
+          ls -al
+          rm -rf .terraform
+      - init
       - env:
           name: TF_WORKSPACE
           command: echo 'dev'
-      - init
       - plan
