@@ -22,5 +22,6 @@ workflows:
       - env:
           name: TF_WORKSPACE
           command: echo 'jal-dev'
-      - init
+      - init:
+          extra_args: [-reconfigure]
       - plan
