@@ -24,4 +24,5 @@ workflows:
           command: echo 'dev'
       - init:
           extra_args: [-reconfigure]
+      - run: terraform workspace select dev -no-color
       - plan
