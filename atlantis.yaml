@@ -22,9 +22,9 @@ workflows:
       - run: |
           pwd
           ls -al
-          rm -rf .terraform
-      - run: terraform workspace select dev
-      - init
+          env
+      - init:
+          extra_args: [-reconfigure]
       - env:
           name: TF_WORKSPACE
           command: echo 'dev'
