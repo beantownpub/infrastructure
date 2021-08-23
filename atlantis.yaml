@@ -2,7 +2,7 @@ version: 3
 projects:
 - dir: dev
   name: dev
-  workspace: jal-dev
+  workspace: dev
   autoplan:
     enabled: true
     when_modified: ["**/*.tf*"]
@@ -21,7 +21,7 @@ workflows:
       steps:
       - env:
           name: TF_WORKSPACE
-          command: echo 'jal-dev'
+          command: echo 'dev'
       - init:
           extra_args: [-reconfigure]
       - plan
