@@ -19,7 +19,8 @@ workflows:
   wtf:
     plan:
       steps:
-      - run: |
-          terraform init -input=false -no-color
-          terraform workspace select -no-color dev
-          terraform plan -input=false -refresh -no-color -out $PLANFILE
+      - env:
+          name: TF_WORKSPACE
+          command: echo 'jal-dev'
+      - init
+      - plan
