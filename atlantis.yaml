@@ -21,7 +21,8 @@ workflows:
       steps:
       - env:
           name: TF_WORKSPACE
-          command: echo 'dev'
+          value:
+          # command: echo 'dev'
       - init:
           extra_args: [-reconfigure]
       - run: terraform workspace select dev -no-color
