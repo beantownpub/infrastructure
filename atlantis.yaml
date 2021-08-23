@@ -6,21 +6,21 @@ projects:
   autoplan:
     enabled: true
     when_modified: ["**/*.tf*"]
-  workflow: wtf
+  workflow: custom_plan
 - dir: prod
   name: prod
   workspace: production
   autoplan:
     enabled: true
     when_modified: ["**/*.tf*"]
-  workflow: wtf
+  workflow: custom_plan
 
 workflows:
-  wtf:
+  custom_plan:
     plan:
       steps:
       - run: |
           echo "Workspace: ${WORKSPACE}"
-          export TF_WORKSPACE=development
+          export TF_WORKSPACE=${WORKSPACE}
           terraform init -no-color
           terraform plan -no-color -input=false -refresh -out $PLANFILE
