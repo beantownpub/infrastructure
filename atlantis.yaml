@@ -1,8 +1,25 @@
 version: 3
 projects:
-- dir: .
+- dir: dev
   name: dev
   workspace: dev
-- dir: .
+  autoplan:
+    enabled: true
+    when_modified: ["dev/*.tf*"]
+- dir: prod
   name: prod
   workspace: prod
+  autoplan:
+    enabled: true
+    when_modified: ["prod/*.tf*"]
+  workflow: wtf
+
+workflows:
+  wtf:
+    plan:
+      steps:
+      - env:
+          name: TF_WORKSPACE
+          command: echo 'prod'
+      - init
+      - plan
