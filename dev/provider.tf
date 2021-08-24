@@ -9,6 +9,7 @@ provider "aws" {
   skip_get_ec2_platforms      = true
 
   endpoints {
+    acm = "http://localhost:4566"
     ec2 = "http://localhost:4566"
     rds = "http://localhost:4566"
   }
