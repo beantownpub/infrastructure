@@ -5,15 +5,15 @@ projects:
   workspace: development
   autoplan:
     enabled: true
-    when_modified: ["**/*.tf*"]
+    when_modified: ["**/*.tf*", "../modules/**/*.tf*"]
   workflow: custom_plan
 - dir: prod
   name: prod
   workspace: production
   autoplan:
     enabled: true
-    when_modified: ["**/*.tf*"]
-  workflow: custom_plan
+    when_modified: ["**/*.tf*", "../modules/**/*.tf*"]
+  workflow: workspace_plan
 
 workflows:
   custom_plan:
@@ -22,7 +22,6 @@ workflows:
       - run: |
           echo "Workspace: ${WORKSPACE}"
           echo "Directory: ${PWD}"
-          ls -al ../
           export TF_WORKSPACE=${WORKSPACE}
           terraform init -no-color
           terraform plan -no-color -input=false -refresh -out $PLANFILE
