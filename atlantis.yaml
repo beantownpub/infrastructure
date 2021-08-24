@@ -21,6 +21,7 @@ workflows:
       steps:
       - run: |
           echo "Workspace: ${WORKSPACE}"
+          echo "Directory: ${PWD}"
           export TF_WORKSPACE=${WORKSPACE}
           terraform init -no-color
           terraform plan -no-color -input=false -refresh -out $PLANFILE

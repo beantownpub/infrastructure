@@ -14,6 +14,12 @@ module "vpc" {
   name = "main"
 }
 
+module "acm" {
+  source = "../modules/acm/"
+  domain_name = "jalgraves.com"
+  validation_method = "EMAIL"
+}
+
 module "web_sg" {
   source = "../modules/security-group/"
   name = "web-sg"
