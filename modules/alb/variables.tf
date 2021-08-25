@@ -1,7 +1,7 @@
 variable "name" {
   description = "Name of the ALB"
   type = string
-  default = "main"
+  default = "jalgraves-ingress"
 }
 
 variable "description" {
