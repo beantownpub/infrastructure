@@ -16,7 +16,7 @@ module "vpc" {
 
 module "acm" {
   source = "../modules/acm/"
-  domain_name = "jalgraves.com"
+  domain_name = "dev.jalgraves.com"
   validation_method = "EMAIL"
 }
 
