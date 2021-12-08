@@ -1,15 +1,15 @@
 variable "name" {
   description = "Name of the security-group"
-  type = string
-  default = "main"
+  type        = string
+  default     = "main"
 }
 
 variable "description" {
   description = "Name of the security-group"
-  type = string
+  type        = string
 }
 
 variable "vpc_id" {
   description = "stupid vpc"
-  type = string
+  type        = string
 }

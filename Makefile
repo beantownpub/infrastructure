@@ -1,18 +1,45 @@
 
-aws_profile ?= ${AWS_PROFILE}
-env ?= dev
+.PHONY: test
+SHELL := /bin/bash
 
-init:
-		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) init -input=false
+profile ?= ${AWS_PROFILE}
 
+export SELF ?= $(MAKE)
+
+.SHELLFLAGS += -e
+.ONESHELL: test/apply
+
+## Format Terraform code
+fmt:
+	terraform fmt --recursive
+
+## Run a test plan for us-east-2
 plan:
-		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) plan
+	cd examples/complete && \
+		terraform init && \
+		aws-vault exec $(profile) -- terraform plan
 
-apply:
-		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) apply
-
+## Destroy resources
 destroy:
-		aws-vault exec $(aws_profile) -- terraform -chdir=$(env) destroy
+	cd examples/complete && \
+		terraform init && \
+		aws-vault exec $(profile) -- terraform destroy
 
-clean:
-		rm -rf $(env)/.terraform || true
+## Show available commands
+help:
+	@printf "Available targets:\n\n"
+	@$(SELF) -s help/generate | grep -E "\w($(HELP_FILTER))"
+
+help/generate:
+	@awk '/^[a-zA-Z\_0-9%:\\\/-]+:/ { \
+		helpMessage = match(lastLine, /^## (.*)/); \
+		if (helpMessage) { \
+			helpCommand = $$1; \
+			helpMessage = substr(lastLine, RSTART + 3, RLENGTH); \
+			gsub("\\\\", "", helpCommand); \
+			gsub(":+$$", "", helpCommand); \
+			printf "  \x1b[32;01m%-35s\x1b[0m %s\n", helpCommand, helpMessage; \
+		} \
+	} \
+	{ lastLine = $$0 }' Makefile | sort -u
+	@printf "\n\n"
