@@ -6,5 +6,5 @@ output "instance" {
 
 output "worker" {
   description = ""
-  value = aws_instance.worker
+  value       = aws_instance.worker
 }

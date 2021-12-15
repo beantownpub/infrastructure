@@ -8,6 +8,11 @@ variable "description" {
   description = "Description of ALB"
   type        = string
 }
+variable "domain_name" {
+  type        = string
+  description = ""
+  default     = null
+}
 
 variable "vpc_id" {
   description = "vpc ID"
@@ -55,3 +60,6 @@ variable "http_tcp_listeners" {
   type        = any
   default     = []
 }
+
+variable "worker_id" {}
+variable "control_plane_id" {}

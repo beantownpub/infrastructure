@@ -13,16 +13,27 @@ export SELF ?= $(MAKE)
 fmt:
 	terraform fmt --recursive
 
-## Run a test plan for us-east-2
-plan:
-	cd examples/complete && \
-		terraform init && \
+## Run terraform init in prod/
+prod/init:
+	cd prod/ && \
+		aws-vault exec $(profile) -- terraform init
+
+## Run terraform plan in prod/
+prod/plan:
+	cd prod/ && \
+		terraform workspace select development && \
 		aws-vault exec $(profile) -- terraform plan
 
-## Destroy resources
-destroy:
-	cd examples/complete && \
-		terraform init && \
+## Run a test plan for us-east-2
+prod/apply:
+	cd prod/ && \
+		terraform workspace select development && \
+		aws-vault exec $(profile) -- terraform apply
+
+## Destroy prod resources
+prod/destroy:
+	cd prod/ && \
+		terraform workspace select development && \
 		aws-vault exec $(profile) -- terraform destroy
 
 ## Show available commands

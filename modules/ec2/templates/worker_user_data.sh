@@ -1,6 +1,9 @@
 #!/bin/bash
 
-sudo yum update -y
+echo "AWS user_data - Control IP ${control_ip}" > user_data_debug.txt
+
+sudo yum update -y || printf "Error updating Yum\n" >> user_data_debug.txt
+sudo yum install -y iproute-tc bind-utils jq nmap || printf "Error install packages\n" >> user_data_debug.txt
 
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 br_netfilter
@@ -14,9 +17,23 @@ EOF
 sudo sysctl --system
 sudo amazon-linux-extras install -y docker
 
+sudo mkdir /etc/docker
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+    "exec-opts": ["native.cgroupdriver=systemd"],
+    "log-driver": "json-file",
+    "log-opts": {
+        "max-size": "50m"
+    },
+    "storage-driver": "overlay2"
+}
+EOF
+
 sudo service docker start
-sudo usermod -a -G docker ec2-use
+sudo usermod -a -G docker ec2-user
 sudo systemctl enable --now docker
+sudo systemctl daemon-reload
+sudo systemctl restart docker
 
 sudo setenforce 0
 sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
@@ -35,24 +52,17 @@ EOF
 sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 sudo systemctl enable --now kubelet
 
-sudo mkdir /etc/docker
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-    "exec-opts": ["native.cgroupdriver=systemd"],
-    "log-driver": "json-file",
-    "log-opts": {
-        "max-size": "50m"
-    },
-    "storage-driver": "overlay2"
-}
+cat <<EOF | tee cluster-join.yaml
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: JoinConfiguration
+discovery:
+  bootstrapToken:
+    token: ${k8s_token}
+    apiServerEndpoint: "${control_ip}:6443"
+    unsafeSkipCAVerification: true
+nodeRegistration: {}
 EOF
 
-sudo systemctl daemon-reload
-sudo systemctl restart docker
-
-echo "Control IP ${control_ip}" > user_data_debug.txt
-
-kubeadm join \
-    --token ${k8s_token} \
-	--discovery-token-ca-cert-hash sha256:55546d2cd07bf1438bed7a48ba58e780bc844358df1535718d167f2bf8450b90 \
-	${control_ip}:6443
+sudo kubeadm join \
+    --config cluster-join.yaml

@@ -1,4 +1,7 @@
 
+variable "ami" {
+  default = null
+}
 
 variable "iam_instance_profile_id" {
   type        = string
@@ -6,11 +9,22 @@ variable "iam_instance_profile_id" {
   default     = null
 }
 
-variable "name" {}
+variable "control_name" {}
+
+variable "cluster_name" {
+  type        = string
+  description = ""
+  default     = "prod-use1-cluster"
+}
+variable "private_subnets" {
+  default = []
+}
 variable "security_groups" {
   default = []
 }
-
+variable "region_code" {
+  default = "use1"
+}
 variable "subnets" {
   type        = list(string)
   description = ""
@@ -22,3 +36,6 @@ variable "tags" {
   description = ""
   default     = {}
 }
+
+variable "worker_name" {}
+variable "env" {}
