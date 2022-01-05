@@ -31,8 +31,7 @@ commands:
           command: |
             terraform --version
             cd prod/
-            terraform workspace select development
-            terraform init
+            terraform init -input=false
 
 jobs:
   run-terraform-init:
