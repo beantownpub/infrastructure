@@ -39,7 +39,7 @@ jobs:
     steps:
       - checkout
       - install_terraform
-      - run_init:
+      - run_init
 
 workflows:
   version: 2
