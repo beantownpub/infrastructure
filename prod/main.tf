@@ -8,6 +8,7 @@ module "labels" {
 }
 
 locals {
+  cluster_name    = "${local.env}-${local.region_code}-jalgraves"
   env         = module.labels.environment
   region_code = module.labels.region_code
   subnet_tags = {
@@ -42,6 +43,7 @@ module "network" {
 module "security" {
   source = "../modules/security-group"
 
+  cluster_name    = local.cluster_name
   env             = local.env
   local_public_ip = "50.231.13.130"
   name            = module.labels.security_group.name
@@ -54,7 +56,7 @@ module "security" {
 module "ec2" {
   source = "../modules/ec2"
 
-  cluster_name    = "${local.env}-${local.region_code}-jalgraves"
+  cluster_name    = local.cluster_name
   control_name    = module.labels.ec2_control.name
   env             = local.env
   region_code     = local.region_code

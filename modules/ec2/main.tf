@@ -70,8 +70,8 @@ data "template_file" "init" {
   vars = {
     cluster_name = var.cluster_name
     env          = var.env
-    k8s_token    = "kq5cf0.c74d4q4syeomk94e"
-    k8s_version  = "v1.23.0"
+    k8s_token    = var.k8s_token
+    k8s_version  = var.k8s_version
   }
 }
 

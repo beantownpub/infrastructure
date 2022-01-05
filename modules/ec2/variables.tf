@@ -39,3 +39,8 @@ variable "tags" {
 
 variable "worker_name" {}
 variable "env" {}
+
+variable "k8s_token" {}
+variable "k8s_version" {
+  default = "1.23.0"
+}

@@ -22,7 +22,7 @@ prod/init:
 prod/plan:
 	cd prod/ && \
 		terraform workspace select development && \
-		aws-vault exec $(profile) -- terraform plan
+		aws-vault exec $(profile) -- terraform plan -refresh=false -compact-warnings
 
 ## Run a test plan for us-east-2
 prod/apply:

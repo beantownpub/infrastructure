@@ -24,8 +24,8 @@ resource "aws_security_group" "internal_cluster_traffic" {
   }
 
   tags = {
-    Name                                                          = var.name
-    "kubernetes.io/cluster/${var.env}-${var.region_code}-cluster" = "member"
+    Name                                        = var.name
+    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
   }
 }
 
@@ -59,8 +59,8 @@ resource "aws_security_group" "web_traffic" {
   }
 
   tags = {
-    Name                                                          = var.web_sg_name
-    "kubernetes.io/cluster/${var.env}-${var.region_code}-cluster" = "member"
+    Name                                        = var.web_sg_name
+    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
   }
 }
 
@@ -94,7 +94,7 @@ resource "aws_security_group" "local_machine_traffic" {
   }
 
   tags = {
-    Name                                                          = "${var.env}-${var.region_code}-local-machine-access"
-    "kubernetes.io/cluster/${var.env}-${var.region_code}-cluster" = "member"
+    Name                                        = "${var.env}-${var.region_code}-local-machine-access"
+    "kubernetes.io/cluster/${var.cluster_name}" = "member"
   }
 }
