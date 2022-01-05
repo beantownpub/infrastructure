@@ -11,7 +11,7 @@ commands:
     steps:
       - run:
           name: Create Terraform Credentials file
-          command: echo "credentials \"app.terraform.io\" { token = \"$TFE_API_TOKEN\" }" >$HOME/.terraformrc
+          command: echo "credentials \"app.terraform.io\" { token = \"$TF_CLOUD_TOKEN\" }" >$HOME/.terraformrc
       - run:
           name: Install Terraform
           environment:
