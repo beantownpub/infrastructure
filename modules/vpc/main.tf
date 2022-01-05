@@ -10,8 +10,8 @@ module "vpc" {
 
   enable_nat_gateway = var.enable_nat_gateway
   enable_vpn_gateway = var.enable_vpn_gateway
-  private_subnets = var.private_subnets
-  public_subnets  = var.public_subnets
+  private_subnets    = var.private_subnets
+  public_subnets     = var.public_subnets
 
-  cidr                       = var.cidr
+  cidr = var.cidr
 }
