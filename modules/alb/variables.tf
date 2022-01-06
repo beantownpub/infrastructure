@@ -4,14 +4,11 @@ variable "name" {
   default     = "jalgraves-ingress"
 }
 
+variable "certificate_arn" {}
+
 variable "description" {
   description = "Description of ALB"
   type        = string
-}
-variable "domain_name" {
-  type        = string
-  description = ""
-  default     = null
 }
 
 variable "vpc_id" {

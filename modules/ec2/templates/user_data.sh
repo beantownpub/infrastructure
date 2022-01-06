@@ -87,7 +87,7 @@ nodeRegistration:
 apiServer:
   timeoutForControlPlane: 4m0s
   certSANs:
-  - "k8s.${env}.beantownpub.com"
+  - "k8s.${env}.${domain_name}"
 apiVersion: kubeadm.k8s.io/v1beta3
 certificatesDir: /etc/kubernetes/pki
 clusterName: ${cluster_name}
@@ -106,14 +106,54 @@ scheduler: {}
 EOF
 
 sudo kubeadm init \
-    --config /home/ec2-user/manifests/cluster-config.yaml || printf "Error installializing cluster\n" >> /home/ec2-user/bootstrap_log.txt
+    --config /home/ec2-user/manifests/cluster-config.yaml || printf "Error initializing cluster\n" >> /home/ec2-user/bootstrap_log.txt
 
+mkdir -p "$${HOME}/.kube"
 mkdir /home/ec2-user/.kube
+cp -i /etc/kubernetes/admin.conf "$${HOME}/.kube"/config
 sudo cp -i /etc/kubernetes/admin.conf /home/ec2-user/.kube/config
 sudo chown 1000:1000 /home/ec2-user/.kube/config
 
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
+kubectl create ns database
+
+kubectl create ns "${env}" && \
+    kubectl label namespace "${env}" istio-injection=enabled
+
+kubectl create ns istio-ingress && \
+		kubectl label namespace istio-ingress istio-injection=enabled
+
+helm repo add cilium https://helm.cilium.io/ && \
+    helm repo add istio https://istio-release.storage.googleapis.com/charts && \
+	helm repo add jetstack https://charts.jetstack.io &&
+    helm repo update
+
+helm upgrade cilium cilium/cilium --install \
+    --version 1.10.5 \
+    --namespace kube-system --reuse-values \
+    --set hubble.relay.enabled=true \
+    --set hubble.ui.enabled=true \
+    --set ipam.operator.clusterPoolIPv4PodCIDR="10.7.0.0/16"\
+    --debug
+
+sleep 15
+
+helm upgrade istio-base istio/base --install \
+    --namespace istio-system \
+    --version 1.12.1 \
+    --create-namespace
+
+sleep 10
+
+helm upgrade istiod istio/istiod --install \
+	--version 1.12.1 \
+    --namespace istio-system
+
+helm upgrade istio-ingress istio/gateway --install \
+    --version 1.12.1 \
+    --namespace istio-ingress \
+    --set service.type=None
 
 # sudo mount bpffs /sys/fs/bpf -t bpf
 

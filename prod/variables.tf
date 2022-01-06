@@ -1,21 +1,6 @@
 #
-# Jalgraves 2021
+# Jalgraves
 #
-
-provider "aws" {
-  region = "us-east-1"
-}
-
-terraform {
-  backend "remote" {
-    hostname     = "app.terraform.io"
-    organization = "beantown"
-
-    workspaces {
-      prefix = "jal-"
-    }
-  }
-}
 
 variable "availability_zones" {
   type        = map(any)
@@ -26,3 +11,14 @@ variable "availability_zones" {
     us-west-2 = ["us-west-2a", "us-west-2b"]
   }
 }
+
+variable "domain_name" {
+  description = "domain name with ssl cert"
+}
+
+variable "local_ip" {
+  description = "The public IP of the network a local machine is connected to"
+  default     = null
+}
+
+variable "public_key" {}

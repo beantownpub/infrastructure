@@ -1,18 +1,17 @@
 #
-# Jalgraves 2021
+# Jalgraves 2022
 #
 
 provider "aws" {
-  region = "us-east-1"
+  region = "us-west-2"
 }
 
 terraform {
-  backend "remote" {
-    hostname     = "app.terraform.io"
+  cloud {
     organization = "beantown"
 
     workspaces {
-      prefix = "jal-"
+      name = "jal-pilot"
     }
   }
 }

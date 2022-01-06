@@ -28,7 +28,7 @@ variable "local_public_ip" {
 variable "env" {}
 variable "region_code" {}
 variable "cluster_name" {
-  type = string
+  type        = string
   description = "Name of cluster to add to tags"
-  default = null
+  default     = null
 }

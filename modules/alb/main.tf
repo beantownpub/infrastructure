@@ -2,11 +2,6 @@
 # Jalgraves 2021
 #
 
-data "aws_acm_certificate" "issued" {
-  domain   = var.domain_name
-  statuses = ["ISSUED"]
-}
-
 module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 6.0"
@@ -40,7 +35,7 @@ resource "aws_lb_listener" "front_end" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = data.aws_acm_certificate.issued.arn
+  certificate_arn   = var.certificate_arn
 
   default_action {
     type             = "forward"

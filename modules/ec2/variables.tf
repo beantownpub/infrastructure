@@ -11,6 +11,8 @@ variable "iam_instance_profile_id" {
 
 variable "control_name" {}
 
+variable "domain_name" {}
+
 variable "cluster_name" {
   type        = string
   description = ""
@@ -44,3 +46,5 @@ variable "k8s_token" {}
 variable "k8s_version" {
   default = "1.23.0"
 }
+
+variable "public_key" {}
