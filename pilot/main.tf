@@ -1,11 +1,11 @@
 data "aws_region" "current" {}
 
 resource "aws_acm_certificate" "cert" {
-  domain_name       = "*.${var.env}.${var.dns_zone}"
+  domain_name       = "*.${local.env}.${var.dns_zone}"
   validation_method = "DNS"
 
   tags = {
-    Environment = var.env
+    Environment = local.env
     Zone        = var.dns_zone
   }
 
@@ -36,7 +36,7 @@ locals {
   env          = module.labels.environment
   region_code  = module.labels.region_code
   subnet_tags = {
-    "kubernetes.io/cluster/prod-use1-jalgraves" = "owned"
+    "kubernetes.io/cluster/${local.cluster_name}" = "owned"
   }
   tags = {
     "Module"      = "terraform-aws-network",
@@ -103,7 +103,7 @@ module "alb" {
   vpc_id           = module.network.vpc_id
   subnets          = module.network.public_subnet_ids
   security_groups  = [module.security.internal_cluster_traffic.id, module.security.web_traffic.id]
-  description      = "ALB for Beantown Pub"
+  description      = "ALB created via Terraform"
 }
 
 
