@@ -1,37 +1,48 @@
 terraform {
-  backend "remote" {
-    hostname     = "app.terraform.io"
+  cloud {
     organization = "beantown"
-
     workspaces {
-      prefix = "jal-"
+      tags = ["dev", "jal"]
     }
   }
 }
 
-module "vpc" {
-  source = "../modules/vpc/"
-  name   = "main"
+module "labels" {
+  source = "../modules/labels"
+
+  environment = var.env
+  tags        = local.tags
 }
 
-module "acm" {
-  source            = "../modules/acm/"
-  domain_name       = "dev.jalgraves.com"
-  validation_method = "EMAIL"
+locals {
+  cluster_name = "${local.env}-${local.region_code}-jalgraves"
+  env          = module.labels.environment
+  region_code  = module.labels.region_code
+  subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "owned"
+  }
+  tags = {
+    "Module"      = "terraform-aws-network",
+    "Provisioner" = "Terraform"
+  }
 }
 
-module "web_sg" {
-  source      = "../modules/security-group/"
-  name        = "web-sg"
-  description = "Security group for web ingress"
-  vpc_id      = module.vpc.vpc_id
-}
+module "network" {
+  source  = "app.terraform.io/beantown/network/aws"
+  version = "0.1.5"
 
-module "alb" {
-  source          = "../modules/alb/"
-  name            = "main-alb"
-  vpc_id          = module.vpc.vpc_id
-  subnets         = module.vpc.private_subnets
-  security_groups = [module.web_sg.security_group_id]
-  description     = "ALB for Beantown Pub"
+  allow_ssh_from_ip               = var.local_ip
+  availability_zones              = var.availability_zones[data.aws_region.current.name]
+  create_ssh_sg                   = true
+  default_security_group_deny_all = false
+  environment                     = var.env
+  cidr_block                      = "10.0.0.0/16"
+  internet_gateway_enabled        = true
+  label_create_enabled            = true
+  nat_gateway_enabled             = false
+  nat_instance_enabled            = false
+  private_subnets_additional_tags = local.subnet_tags
+  public_subnets_additional_tags  = local.subnet_tags
+  region_code                     = local.region_code
+  tags                            = local.tags
 }

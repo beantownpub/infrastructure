@@ -1,6 +1,16 @@
+#        **      **      **          ********    *******        **      **      **  ********  ********
+#       /**     ****    /**         **//////**  /**////**      ****    /**     /** /**/////  **//////
+#       /**    **//**   /**        **      //   /**   /**     **//**   /**     /** /**      /**
+#       /**   **  //**  /**       /**           /*******     **  //**  //**    **  /******* /*********
+#       /**  ********** /**       /**    *****  /**///**    **********  //**  **   /**////  ////////**
+#   **  /** /**//////** /**       //**  ////**  /**  //**  /**//////**   //****    /**             /**
+#  //*****  /**     /** /********  //********   /**   //** /**     /**    //**     /******** ********
+#   /////   //      //  ////////    ////////    //     //  //      //      //      //////// ////////
+# 2022
+
 data "aws_region" "current" {}
 data "aws_acm_certificate" "issued" {
-  domain   = var.domain_name
+  domain   = var.dns_zone
   statuses = ["ISSUED"]
 }
 module "labels" {
@@ -61,7 +71,9 @@ module "ec2" {
 
   cluster_name    = local.cluster_name
   control_name    = module.labels.ec2_control.name
+  domain_name     = var.dns_zone
   env             = local.env
+  k8s_token       = var.k8s_token
   public_key      = var.public_key
   region_code     = local.region_code
   subnets         = module.network.public_subnet_ids

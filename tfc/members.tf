@@ -7,31 +7,23 @@
 #  //*****  /**     /** /********  //********   /**   //** /**     /**    //**     /******** ********
 #   /////   //      //  ////////    ////////    //     //  //      //      //      //////// ////////
 # 2022
-output "network" {
-  description = ""
-  value       = module.network.network
+
+resource "tfe_organization_membership" "jalgraves" {
+  organization  = "beantown"
+  email = "jalgraves@gmail.com"
 }
 
-output "ec2_control" {
-  value = {
-    id         = module.ec2.instance.id
-    public_ip  = module.ec2.instance.public_ip
-    private_ip = module.ec2.instance.private_ip
-  }
+resource "tfe_organization_membership" "jalbot" {
+  organization  = "beantown"
+  email = "jalgraves@yahoo.com"
 }
 
-output "ec2_worker" {
-  value = {
-    id         = module.ec2.worker.id
-    public_ip  = module.ec2.worker.public_ip
-    private_ip = module.ec2.worker.private_ip
-  }
+resource "tfe_team_organization_member" "jalgraves" {
+  team_id = tfe_team.owners.id
+  organization_membership_id = tfe_organization_membership.jalgraves.id
 }
 
-output "alb_dns_name" {
-  value = module.alb.dns_name
-}
-
-output "iam" {
-  value = module.iam
+resource "tfe_team_organization_member" "jalbot" {
+  team_id = tfe_team.owners.id
+  organization_membership_id = tfe_organization_membership.jalbot.id
 }
