@@ -188,5 +188,33 @@ spec:
   type: NodePort
 EOF
 
+kubectl apply -n istio-ingress -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: web-gateway
+  namespace: istio-ingress
+spec:
+  selector:
+    app: istio-ingress
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "${domain_name}"
+    - "*.${domain_name}"
+    - "*.${env}.${domain_name}"
+    - "thehubpub.com"
+    - "*.${env}.thehubpub.com"
+    - "www.thehubpub.com"
+    - "drdavisicecream.com"
+    - "www.drdavisicecream.com"
+    - "wavelengths-brookline.com"
+    - "www.wavelengths-brookline.com"
+    - "*.jalgraves.com"
+EOF
+
 # sudo mount bpffs /sys/fs/bpf -t bpf
 
