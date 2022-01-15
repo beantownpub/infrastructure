@@ -11,8 +11,11 @@
 variable "dns_zone" {}
 variable "github_oauth_token" {}
 variable "local_ip" {}
-variable "prod_aws_access_key_id" {}
-variable "prod_aws_secret_access_key" {}
+variable "aws_access_key_id" {}
+variable "aws_secret_access_key" {}
+variable "ns1_api_key" {}
+variable "pilot_k8s_token" {}
 variable "prod_k8s_token" {}
-variable "prod_public_key" {}
+variable "pilot_region" {}
+variable "public_key" {}
 variable "tfc_token" {}

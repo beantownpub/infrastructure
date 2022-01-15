@@ -34,6 +34,22 @@ resource "tfe_workspace" "dev" {
   }
 }
 
+resource "tfe_workspace" "pilot" {
+  name              = "pilot"
+  description       = "Workspace for pilot infrastructure"
+  organization      = tfe_organization.beantown.name
+  execution_mode    = "remote"
+  tag_names         = ["pilot"]
+  terraform_version = "1.1.3"
+  working_directory = "pilot"
+  vcs_repo {
+    branch             = "master"
+    identifier         = "beantownpub/infrastructure"
+    ingress_submodules = false
+    oauth_token_id     = var.github_oauth_token
+  }
+}
+
 resource "tfe_workspace" "prod" {
   name                  = "prod"
   description           = "Workspace for prod infrastructure"
