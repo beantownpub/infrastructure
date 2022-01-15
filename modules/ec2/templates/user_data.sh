@@ -155,5 +155,38 @@ helm upgrade istio-ingress istio/gateway --install \
     --namespace istio-ingress \
     --set service.type=None
 
+
+kubectl apply -n istio-ingress -f - <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: istio-ingress
+    istio: ingress
+  name: istio-ingress
+spec:
+  ports:
+  - name: status-port
+    nodePort: 32382
+    port: 15021
+    protocol: TCP
+    targetPort: 15021
+  - name: http2
+    nodePort: 30080
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - name: https
+    nodePort: 30443
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  selector:
+    app: istio-ingress
+    istio: ingress
+  sessionAffinity: None
+  type: NodePort
+EOF
+
 # sudo mount bpffs /sys/fs/bpf -t bpf
 
