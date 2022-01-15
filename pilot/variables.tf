@@ -19,7 +19,7 @@ variable "availability_zones" {
 }
 
 variable "dns_zone" {
-  type = string
+  type        = string
   description = "Root domain name used for hosts and certs"
 }
 
@@ -28,7 +28,7 @@ variable "env" {
 }
 
 variable "k8s_token" {
-  type = string
+  type        = string
   description = "Token used by nodes to join K8s cluster"
 }
 
@@ -38,12 +38,12 @@ variable "local_ip" {
 }
 
 variable "ns1_api_key" {
-  type = string
+  type        = string
   description = "NS1 API key used to create CNAMEs for SSL cert verification"
 }
 
 variable "public_key" {
-  type = string
+  type        = string
   description = "SSH public key"
 }
 
