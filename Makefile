@@ -14,6 +14,29 @@ fmt:
 	terraform fmt --recursive
 
 ## Run terraform init in prod/
+dev/init:
+	cd dev/ && \
+		aws-vault exec $(profile) -- terraform init
+
+## Run terraform plan in dev/
+dev/plan:
+	cd dev/ && \
+		terraform workspace select dev && \
+		aws-vault exec $(profile) -- terraform plan -compact-warnings
+
+## Run a test plan for us-east-2
+dev/apply:
+	cd dev/ && \
+		terraform workspace select dev && \
+		aws-vault exec $(profile) -- terraform apply -compact-warnings -var-file=$(var_file)
+
+## Destroy dev resources
+dev/destroy:
+	cd dev/ && \
+		terraform workspace select dev && \
+		aws-vault exec $(profile) -- terraform destroy -var-file=$(var_file)
+
+## Run terraform init in prod/
 pilot/init:
 	cd pilot/ && \
 		aws-vault exec $(profile) -- terraform init
@@ -44,19 +67,19 @@ prod/init:
 ## Run terraform plan in prod/
 prod/plan:
 	cd prod/ && \
-		terraform workspace select development && \
+		terraform workspace select prod && \
 		aws-vault exec $(profile) -- terraform plan -refresh=false -compact-warnings -var-file=$(var_file)
 
 ## Run a test plan for us-east-2
 prod/apply:
 	cd prod/ && \
-		terraform workspace select development && \
+		terraform workspace select prod && \
 		aws-vault exec $(profile) -- terraform apply -var-file=$(var_file)
 
 ## Destroy prod resources
 prod/destroy:
 	cd prod/ && \
-		terraform workspace select development && \
+		terraform workspace select prod && \
 		aws-vault exec $(profile) -- terraform destroy -var-file=$(var_file)
 
 ## Run terraform init in tfc/

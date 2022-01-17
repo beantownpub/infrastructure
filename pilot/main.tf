@@ -105,5 +105,3 @@ module "alb" {
   security_groups  = [module.security.internal_cluster_traffic.id, module.security.web_traffic.id]
   description      = "ALB created via Terraform"
 }
-
-

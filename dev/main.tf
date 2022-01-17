@@ -1,10 +1,27 @@
-terraform {
-  cloud {
-    organization = "beantown"
-    workspaces {
-      tags = ["dev", "jal"]
-    }
+data "aws_region" "current" {}
+
+resource "aws_acm_certificate" "cert" {
+  domain_name       = "*.${local.env}.${var.dns_zone}"
+  validation_method = "DNS"
+
+  tags = {
+    Environment = local.env
+    Zone        = var.dns_zone
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+module "ns1" {
+  source  = "app.terraform.io/beantown/ns1/aws"
+  version = "0.1.1"
+
+  ns1_api_key  = var.ns1_api_key
+  cname_record = one(aws_acm_certificate.cert.domain_validation_options[*]).resource_record_name
+  cname_target = one(aws_acm_certificate.cert.domain_validation_options[*]).resource_record_value
+  dns_zone     = var.dns_zone
 }
 
 module "labels" {
@@ -45,4 +62,46 @@ module "network" {
   public_subnets_additional_tags  = local.subnet_tags
   region_code                     = local.region_code
   tags                            = local.tags
+}
+
+module "security" {
+  source = "../modules/security-group"
+
+  cluster_name    = local.cluster_name
+  env             = local.env
+  local_public_ip = var.local_ip
+  name            = module.labels.security_group.name
+  region_code     = module.labels.region_code
+  web_sg_name     = module.labels.web_security_group.name
+  vpc_id          = module.network.vpc_id
+  description     = "Security group for K8s API traffic created via Terraform"
+}
+
+module "ec2" {
+  source = "../modules/ec2"
+
+  cluster_name    = local.cluster_name
+  control_name    = module.labels.ec2_control.name
+  domain_name     = var.dns_zone
+  env             = local.env
+  k8s_token       = var.k8s_token
+  public_key      = var.public_key
+  region_code     = local.region_code
+  subnets         = module.network.public_subnet_ids
+  security_groups = [module.security.internal_cluster_traffic.id, module.security.local_machine_traffic.id]
+  worker_name     = module.labels.ec2_worker.name
+}
+
+
+module "alb" {
+  source = "../modules/alb"
+
+  certificate_arn  = aws_acm_certificate.cert.arn
+  control_plane_id = module.ec2.instance.id
+  worker_id        = module.ec2.worker.id
+  name             = module.labels.alb.name
+  vpc_id           = module.network.vpc_id
+  subnets          = module.network.public_subnet_ids
+  security_groups  = [module.security.internal_cluster_traffic.id, module.security.web_traffic.id]
+  description      = "ALB created via Terraform"
 }
