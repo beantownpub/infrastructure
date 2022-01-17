@@ -216,5 +216,25 @@ spec:
     - "*.jalgraves.com"
 EOF
 
+kubectl apply -n kube-system -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: hubble
+spec:
+  hosts:
+  - "hubble.${env}.${domain_name}"
+
+  gateways:
+  - istio-ingress/web-gateway
+  - mesh # applies to all the sidecars in the mesh
+  http:
+  - route:
+    - destination:
+        port:
+          number: 80
+        host: "hubble-ui.kube-system.svc.cluster.local"
+EOF
+
 # sudo mount bpffs /sys/fs/bpf -t bpf
 
