@@ -21,3 +21,12 @@ resource "tfe_variable" "github_oauth_token" {
   description  = "GitHub OAuth token"
   sensitive    = true
 }
+
+resource "tfe_variable" "slack_webhook_url" {
+  key          = "slack_webhook_url"
+  value        = var.slack_webhook_url
+  category     = "terraform"
+  workspace_id = data.tfe_workspace.tfc.id
+  description  = "Slack webhook URL"
+  sensitive    = true
+}

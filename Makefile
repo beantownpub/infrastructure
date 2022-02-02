@@ -1,10 +1,12 @@
-
+-include **/Makefile
 .PHONY: test
 SHELL := /bin/bash
-
+export MAKE_PATH ?= $(shell pwd)
 profile ?= ${AWS_PROFILE}
 
 export SELF ?= $(MAKE)
+
+MAKE_FILES = ${MAKE_PATH}/**/Makefile ${MAKE_PATH}/Makefile
 
 .SHELLFLAGS += -e
 .ONESHELL: test/apply
@@ -82,6 +84,23 @@ prod/destroy:
 		terraform workspace select prod && \
 		aws-vault exec $(profile) -- terraform destroy -var-file=$(var_file)
 
+## Run terraform init in dns/
+dns/init:
+	cd dns/ && \
+		aws-vault exec $(profile) -- terraform init
+
+## Run terraform plan in dns/
+dns/plan:
+	cd dns/ && \
+		terraform workspace select dns && \
+		aws-vault exec $(profile) -- terraform plan -compact-warnings
+
+## Run a test plan for us-east-2
+dns/apply:
+	cd dns/ && \
+		terraform workspace select dns && \
+		aws-vault exec $(profile) -- terraform apply
+
 ## Run terraform init in tfc/
 tfc/init:
 	cd tfc/ && \
@@ -115,5 +134,5 @@ help/generate:
 			printf "  \x1b[32;01m%-35s\x1b[0m %s\n", helpCommand, helpMessage; \
 		} \
 	} \
-	{ lastLine = $$0 }' Makefile | sort -u
+	{ lastLine = $$0 }' $(MAKE_FILES) | sort -u
 	@printf "\n\n"
