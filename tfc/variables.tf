@@ -23,3 +23,4 @@ variable "public_key" {}
 variable "tfc_token" {}
 variable "slack_webhook_url" {}
 variable "tailscale_api_key" {}
+variable "vpc_id" {}

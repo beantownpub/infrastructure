@@ -86,7 +86,7 @@ resource "tfe_notification_configuration" "dns" {
   name             = "dns-notification-configuration"
   enabled          = true
   destination_type = "slack"
-  triggers         = ["run:planning", "run:errored", "run:needs_attention", "run:completed"]
+  triggers         = ["run:errored", "run:needs_attention", "run:completed"]
   url              = var.slack_webhook_url
   workspace_id     = tfe_workspace.dns.id
 }
@@ -95,7 +95,7 @@ resource "tfe_notification_configuration" "pilot" {
   name             = "pilot-notification-configuration"
   enabled          = true
   destination_type = "slack"
-  triggers         = ["run:planning", "run:errored", "run:needs_attention", "run:completed"]
+  triggers         = ["run:errored", "run:needs_attention", "run:completed"]
   url              = var.slack_webhook_url
   workspace_id     = tfe_workspace.pilot.id
 }
@@ -104,7 +104,7 @@ resource "tfe_notification_configuration" "tfc" {
   name             = "tfc-notification-configuration"
   enabled          = true
   destination_type = "slack"
-  triggers         = ["run:planning", "run:errored", "run:needs_attention", "run:completed"]
+  triggers         = ["run:errored", "run:needs_attention", "run:completed"]
   url              = var.slack_webhook_url
   workspace_id     = data.tfe_workspace.tfc.id
 }

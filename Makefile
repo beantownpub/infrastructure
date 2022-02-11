@@ -118,6 +118,10 @@ tfc/apply:
 		terraform workspace select tfc && \
 		aws-vault exec $(profile) -- terraform apply -var-file=$(var_file)
 
+## Install pre-commit hooks
+pre-commit:
+	pre-commit install --install-hooks --allow-missing-config
+
 ## Show available commands
 help:
 	@printf "Available targets:\n\n"

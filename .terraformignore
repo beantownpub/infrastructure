@@ -1,0 +1,11 @@
+modules/
+.github/
+.circleci/
+.git/
+Makefile
+.pre-commit-config.yaml
+.gitignore
+.editorconfig
+.envrc
+.tool-versions
+README.md

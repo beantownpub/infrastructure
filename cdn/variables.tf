@@ -8,7 +8,4 @@
 #   /////   //      //  ////////    ////////    //     //  //      //      //      //////// ////////
 # 2022
 
-resource "tailscale_tailnet_key" "ec2_relay" {
-  reusable  = true
-  ephemeral = false
-}
+variable "region" { default = "us-east-1" }

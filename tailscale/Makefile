@@ -14,7 +14,7 @@ tailscale/init:
 tailscale/plan:
 	cd tailscale/ && \
 		terraform workspace select tailscale && \
-		aws-vault exec $(profile) -- terraform plan -compact-warnings
+		aws-vault exec $(profile) -- terraform plan -compact-warnings -var-file=$(var_file)
 
 ## Run a test plan for us-east-2
 tailscale/apply:
