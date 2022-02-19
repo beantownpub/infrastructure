@@ -98,25 +98,41 @@ dns/plan:
 ## Run a test plan for us-east-2
 dns/apply:
 	cd dns/ && \
-		terraform workspace select dns && \
-		aws-vault exec $(profile) -- terraform apply
+		terraform workspace select dns && aws-vault exec $(profile) -- terraform apply
 
 ## Run terraform init in tfc/
 tfc/init:
 	cd tfc/ && \
-		aws-vault exec $(profile) -- terraform init
+		terraform init
 
 ## Run terraform plan in tfc/
 tfc/plan:
 	cd tfc/ && \
 		terraform workspace select tfc && \
-		aws-vault exec $(profile) -- terraform plan -refresh=false -compact-warnings -var-file=$(var_file)
+			terraform plan -compact-warnings -var-file=$(var_file)
 
 ## Run a test plan for us-east-2
 tfc/apply:
 	cd tfc/ && \
 		terraform workspace select tfc && \
-		aws-vault exec $(profile) -- terraform apply -var-file=$(var_file)
+			terraform apply -var-file=$(var_file)
+
+## Run terraform init in circleci/
+circleci/init:
+	cd circleci/ && \
+		terraform init
+
+## Run terraform plan in circleci/
+circleci/plan:
+	cd circleci/ && \
+		terraform workspace select circleci && \
+			terraform plan -compact-warnings
+
+## Run a test plan for us-east-2
+circleci/apply:
+	cd circleci/ && \
+		terraform workspace select circleci && \
+			terraform apply -var-file=$(var_file)
 
 ## Install pre-commit hooks
 pre-commit:
