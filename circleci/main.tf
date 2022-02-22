@@ -3,22 +3,12 @@
 # +-+-+-+-+ +-+-+-+-+-+-+-+-+-+ +-+-+-+-+
 # 2022
 
-terraform {
-  required_providers {
-    tfe = {
-      source  = "hashicorp/tfe"
-      version = "0.27.0"
-    }
-  }
-  cloud {
+data "terraform_remote_state" "tfc" {
+  backend = "remote"
+  config = {
     organization = "beantown"
-
-    workspaces {
+    workspaces = {
       name = "tfc"
     }
   }
-}
-
-provider "tfe" {
-  token = var.tfc_token
 }

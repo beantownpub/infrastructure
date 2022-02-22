@@ -126,13 +126,19 @@ circleci/init:
 circleci/plan:
 	cd circleci/ && \
 		terraform workspace select circleci && \
-			terraform plan -compact-warnings
+			terraform plan -compact-warnings -var-file="${HOME}/tfvars/beantown_circleci.tfvars"
 
 ## Run a test plan for us-east-2
 circleci/apply:
 	cd circleci/ && \
 		terraform workspace select circleci && \
-			terraform apply -var-file=$(var_file)
+			terraform apply -var-file="${HOME}/tfvars/beantown_circleci.tfvars"
+
+## Run a CircleCI destroy
+circleci/destroy:
+	cd circleci/ && \
+		terraform workspace select circleci && \
+			terraform destroy
 
 ## Install pre-commit hooks
 pre-commit:
