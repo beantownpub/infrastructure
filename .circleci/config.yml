@@ -114,7 +114,6 @@ workflows:
           name: init and plan dev/
           workspace: dev
           requires:
-            - terraform_fmt_check
             - terraform validate dev/
       - terraform_init_plan:
           name: init and plan dns/
@@ -126,35 +125,29 @@ workflows:
           name: init and plan pilot/
           workspace: pilot
           requires:
-            - terraform_fmt_check
             - terraform validate pilot/
       - terraform_init_plan:
           name: init and plan prod/
           workspace: prod
           requires:
-            - terraform_fmt_check
             - terraform validate prod/
       - terraform_init_plan:
           name: init and plan circleci/merch_api
           workspace: circleci/merch_api
           requires:
-            - terraform_fmt_check
             - terraform validate circleci/merch_api
       - terraform_init_plan:
           name: init and plan cdn/
           workspace: cdn
           requires:
-            - terraform_fmt_check
             - terraform validate cdn/
       - terraform_init_plan:
           name: init and plan tailscale/
           workspace: tailscale
           requires:
-            - terraform_fmt_check
             - terraform validate tailscale/
       - terraform_init_plan:
           name: init and plan circleci/menu_api
           workspace: circleci/menu_api
           requires:
-            - terraform_fmt_check
             - terraform validate circleci/menu_api
