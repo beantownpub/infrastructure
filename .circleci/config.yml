@@ -119,7 +119,6 @@ workflows:
           name: init and plan dns/
           workspace: dns
           requires:
-            - terraform_fmt_check
             - terraform validate dns/
       - terraform_init_plan:
           name: init and plan pilot/
