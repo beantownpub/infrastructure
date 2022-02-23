@@ -80,3 +80,8 @@ workflows:
           workspace: cdn
           requires:
             - terraform_fmt_check
+      - terraform_init_plan:
+          name: init and plan cdn/
+          workspace: tailscale
+          requires:
+            - terraform_fmt_check
