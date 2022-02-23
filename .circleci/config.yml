@@ -12,7 +12,7 @@ commands:
       - run:
           name: Create Terraform vault.tfvars file
           command: |
-            echo credentials "app.terraform.io" { token = \"$TFE_API_TOKEN\" } > $HOME/.terraformrc
+            echo credentials "app.terraform.io" { token = \"$TF_CLOUD_TOKEN\" } > $HOME/.terraformrc
   terraform:
     parameters:
       workspace:
