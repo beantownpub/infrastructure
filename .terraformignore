@@ -1,4 +1,3 @@
-modules/
 .github/
 .circleci/
 .git/
@@ -9,3 +8,4 @@ Makefile
 .envrc
 .tool-versions
 README.md
+**/.terraform

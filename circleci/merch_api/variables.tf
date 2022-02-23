@@ -3,6 +3,4 @@
 # +-+-+-+-+ +-+-+-+-+-+-+-+-+-+ +-+-+-+-+
 # 2022
 
-provider "aws" {
-  region = var.region
-}
+variable "api_token" {}

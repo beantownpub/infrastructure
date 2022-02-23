@@ -14,7 +14,7 @@ terraform {
   cloud {
     organization = "beantown"
     workspaces {
-      name = "circleci"
+      name = "circleci_admin"
     }
   }
 }

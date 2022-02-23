@@ -3,6 +3,9 @@
 # +-+-+-+-+ +-+-+-+-+-+-+-+-+-+ +-+-+-+-+
 # 2022
 
-provider "aws" {
-  region = var.region
+resource "circleci_project" "beantownpub_admin" {
+  name = "admin"
+  env_vars = {
+    GOOGLE_API_KEY = var.google_api_key
+  }
 }

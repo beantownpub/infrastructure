@@ -4,7 +4,7 @@
 # 2022
 
 terraform {
-  required_version = "~> 1.1.3"
+  required_version = ">= 1.1.3"
   required_providers {
     circleci = {
       source  = "TomTucka/circleci"
@@ -14,13 +14,13 @@ terraform {
   cloud {
     organization = "beantown"
     workspaces {
-      name = "circleci"
+      name = "circleci_menu_api"
     }
   }
 }
 
 provider "circleci" {
-  token        = var.api_token
+  token        = "da2d84c302c86591a38901ac3e1cc827cd98378b"
   vcs_type     = "github"
   organization = "beantownpub"
 }

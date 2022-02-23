@@ -29,7 +29,7 @@ resource "tfe_variable" "pilot_k8s_token" {
   value        = var.pilot_k8s_token
   category     = "terraform"
   workspace_id = tfe_workspace.pilot.id
-  description  = "pilot K8s cluster token"
+  description  = "pilot K8s token for joining cluster"
   sensitive    = true
 }
 
