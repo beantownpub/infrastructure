@@ -18,13 +18,16 @@ commands:
       workspace:
         type: enum
         enum: [cdn, circleci/menu_api, circleci/merch_api, dev, dns, pilot, prod, tailscale, tfc]
+      tf_command:
+        type: enum
+        enum: [plan, validate]
     steps:
       - checkout
       - run:
           name: Run terraform init & plan in << parameters.workspace >>/
           command: |
             cd << parameters.workspace >>/
-            terraform init && terraform plan
+            terraform init && terraform << parameters.tf_command >>
 
 jobs:
   terraform_fmt_check:
@@ -35,6 +38,17 @@ jobs:
           name: Terraform fmt check
           command: terraform fmt -check -recursive -diff
 
+  terraform_validate:
+    executor: terraform
+    parameters:
+      workspace:
+        type: string
+    steps:
+      - checkout
+      - terraform:
+          workspace: << parameters.workspace >>
+          tf_command: validate
+
   terraform_init_plan:
     executor: terraform
     parameters:
@@ -44,42 +58,84 @@ jobs:
       - terraform_creds
       - terraform:
           workspace: << parameters.workspace >>
+          tf_command: plan
 
 workflows:
   version: 2
   terraform:
     jobs:
       - terraform_fmt_check
+      - terraform_validate:
+          name: terraform validate dev/
+          workspace: dev
+          requires:
+            - terraform_fmt_check
+      - terraform_validate:
+          name: terraform validate pilot/
+          workspace: pilot
+          requires:
+            - terraform_fmt_check
+      - terraform_validate:
+          name: terraform validate prod/
+          workspace: prod
+          requires:
+            - terraform_fmt_check
+      - terraform_validate:
+          name: terraform validate circleci/merch_api
+          workspace: circleci/merch_api
+          requires:
+            - terraform_fmt_check
+      - terraform_validate:
+          name: terraform validate cdn/
+          workspace: cdn
+          requires:
+            - terraform_fmt_check
+      - terraform_validate:
+          name: terraform validate tailscale/
+          workspace: tailscale
+          requires:
+            - terraform_fmt_check
+      - terraform_validate:
+          name: terraform validate circleci/menu_api
+          workspace: circleci/menu_api
+          requires:
+            - terraform_fmt_check
       - terraform_init_plan:
           name: init and plan dev/
           workspace: dev
           requires:
             - terraform_fmt_check
+            - terraform validate dev/
       - terraform_init_plan:
           name: init and plan pilot/
           workspace: pilot
           requires:
             - terraform_fmt_check
+            - terraform validate pilot/
       - terraform_init_plan:
           name: init and plan prod/
           workspace: prod
           requires:
             - terraform_fmt_check
+            - terraform validate prod/
       - terraform_init_plan:
           name: init and plan circleci/merch_api
           workspace: circleci/merch_api
           requires:
             - terraform_fmt_check
+            - terraform validate circleci/merch_api
       - terraform_init_plan:
           name: init and plan cdn/
           workspace: cdn
           requires:
             - terraform_fmt_check
+            - terraform validate cdn/
       - terraform_init_plan:
           name: init and plan tailscale/
           workspace: tailscale
           requires:
             - terraform_fmt_check
+            - terraform validate tailscale/
       - terraform_init_plan:
           name: init and plan circleci/menu_api
           workspace: circleci/menu_api
