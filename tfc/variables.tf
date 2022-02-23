@@ -15,6 +15,7 @@ variable "docker_password" {}
 variable "docker_username" {}
 variable "email_recipient" {}
 variable "github_oauth_token" {}
+variable "google_api_key" {}
 variable "helm_repo" {}
 variable "jalbot_token" {}
 variable "k8s_server" {}

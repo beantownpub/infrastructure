@@ -146,6 +146,15 @@ resource "tfe_variable" "test_email_recipient" {
   sensitive    = false
 }
 
+resource "tfe_variable" "google_api_key" {
+  key          = "google_api_key"
+  value        = var.google_api_key
+  category     = "terraform"
+  workspace_id = tfe_workspace.circleci.id
+  description  = "Google API token"
+  sensitive    = true
+}
+
 resource "tfe_variable" "slack_webhook_channel" {
   key          = "slack_webhook_channel"
   value        = var.slack_webhook_channel
