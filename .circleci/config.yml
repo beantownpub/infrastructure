@@ -44,7 +44,7 @@ jobs:
       workspace:
         type: string
     steps:
-      - checkout
+      - terraform_creds
       - terraform:
           workspace: << parameters.workspace >>
           tf_command: validate
@@ -100,12 +100,28 @@ workflows:
           workspace: circleci/menu_api
           requires:
             - terraform_fmt_check
+      - terraform_validate:
+          name: terraform validate dns/
+          workspace: dns
+          requires:
+            - terraform_fmt_check
+      - terraform_validate:
+          name: terraform validate tfc/
+          workspace: tfc
+          requires:
+            - terraform_fmt_check
       - terraform_init_plan:
           name: init and plan dev/
           workspace: dev
           requires:
             - terraform_fmt_check
             - terraform validate dev/
+      - terraform_init_plan:
+          name: init and plan dns/
+          workspace: dns
+          requires:
+            - terraform_fmt_check
+            - terraform validate dns/
       - terraform_init_plan:
           name: init and plan pilot/
           workspace: pilot
@@ -141,3 +157,4 @@ workflows:
           workspace: circleci/menu_api
           requires:
             - terraform_fmt_check
+            - terraform validate circleci/menu_api
