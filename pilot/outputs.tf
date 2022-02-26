@@ -6,6 +6,10 @@ output "network" {
   value       = module.network.network
 }
 
+output "cluster" {
+  value = module.ec2.cluster
+}
+
 output "ec2_control" {
   value = {
     id         = module.ec2.instance.id

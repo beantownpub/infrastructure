@@ -83,8 +83,7 @@ data "template_file" "join" {
   template = file("${path.module}/templates/worker_user_data.sh")
 
   vars = {
-    k8s_token    = var.k8s_token
-    cluster_name = local.cluster_name
-    control_ip   = aws_instance.control.private_ip
+    k8s_token  = var.k8s_token
+    control_ip = aws_instance.control.private_ip
   }
 }

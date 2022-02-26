@@ -78,6 +78,8 @@ bootstrapTokens:
 localAPIEndpoint:
   bindPort: 6443
 nodeRegistration:
+  kubeletExtraArgs:
+    cloud-provider: "external"
   criSocket: /var/run/dockershim.sock
   imagePullPolicy: IfNotPresent
   taints:
@@ -97,6 +99,7 @@ clusterName: ${cluster_name}
 controllerManager:
   extraArgs:
     cloud-provider: external
+    external-cloud-volume-plugin: aws
 dns: {}
 etcd:
   local:
@@ -108,7 +111,7 @@ networking:
   serviceSubnet: 10.96.0.0/12
 scheduler: {}
 ---
-apiVersion: kubelet.config.k8s.io/v1beta1
+apiVersion: kubelet.config.k8s.io/v1alpha1
 kind: KubeletConfiguration
 providerID: ${cluster_name}
 EOF
@@ -244,5 +247,11 @@ spec:
           number: 80
         host: "hubble-ui.kube-system.svc.cluster.local"
 EOF
+
+helm repo add aws-ccm https://kubernetes.github.io/cloud-provider-aws
+
+helm upgrade aws-ccm aws-ccm/aws-cloud-controller-manager \
+    --install \
+    --set args="{--cloud-provider=aws,--v=2,--cluster-cidr=10.96.0.0/12,--cluster-name=${cluster_name}}"
 
 # sudo mount bpffs /sys/fs/bpf -t bpf
