@@ -1,4 +1,15 @@
+# +-+-+-+-+ +-+-+-+-+-+-+-+-+-+ +-+-+-+-+
+# |*|*|*|*| |J|A|L|G|R|A|V|E|S| |*|*|*|*|
+# +-+-+-+-+ +-+-+-+-+-+-+-+-+-+ +-+-+-+-+
+# 2022
 
+locals {
+  app_versions = {
+    cilium = "1.10.5"
+    istio  = "1.12.1"
+    k8s    = "1.23.0"
+  }
+}
 variable "ami" {
   default = null
 }
@@ -16,7 +27,7 @@ variable "domain_name" {}
 variable "cluster_name" {
   type        = string
   description = ""
-  default     = "prod-use1-cluster"
+  default     = "jalgraves-cluster"
 }
 variable "private_subnets" {
   default = []
@@ -39,12 +50,8 @@ variable "tags" {
   default     = {}
 }
 
-variable "worker_name" {}
 variable "env" {}
 
 variable "k8s_token" {}
-variable "k8s_version" {
-  default = "1.23.0"
-}
-
 variable "public_key" {}
+variable "worker_name" {}

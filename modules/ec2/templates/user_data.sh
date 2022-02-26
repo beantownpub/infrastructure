@@ -71,10 +71,10 @@ mkdir -p /home/ec2-user/manifests
 
 cat <<EOF | tee /home/ec2-user/manifests/cluster-config.yaml
 apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
 bootstrapTokens:
 - token: ${k8s_token}
   ttl: 24h0m0s
-kind: InitConfiguration
 localAPIEndpoint:
   bindPort: 6443
 nodeRegistration:
@@ -84,25 +84,33 @@ nodeRegistration:
   - effect: NoSchedule
     key: node-role.kubernetes.io/master
 ---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
 apiServer:
   timeoutForControlPlane: 4m0s
   certSANs:
   - "k8s.${env}.${domain_name}"
-apiVersion: kubeadm.k8s.io/v1beta3
+  extraArgs:
+    cloud-provider: external
 certificatesDir: /etc/kubernetes/pki
 clusterName: ${cluster_name}
-controllerManager: {}
+controllerManager:
+  extraArgs:
+    cloud-provider: external
 dns: {}
 etcd:
   local:
     dataDir: /var/lib/etcd
 imageRepository: k8s.gcr.io
-kind: ClusterConfiguration
 kubernetesVersion: ${k8s_version}
 networking:
   dnsDomain: cluster.local
   serviceSubnet: 10.96.0.0/12
 scheduler: {}
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+providerID: ${cluster_name}
 EOF
 
 sudo kubeadm init \
@@ -127,10 +135,11 @@ kubectl create ns istio-ingress && \
 helm repo add cilium https://helm.cilium.io/ && \
     helm repo add istio https://istio-release.storage.googleapis.com/charts && \
 	helm repo add jetstack https://charts.jetstack.io &&
+    helm repo add beantown https://beantownpub.github.io/helm/
     helm repo update
 
 helm upgrade cilium cilium/cilium --install \
-    --version 1.10.5 \
+    --version ${cilium_version} \
     --namespace kube-system --reuse-values \
     --set hubble.relay.enabled=true \
     --set hubble.ui.enabled=true \
@@ -141,17 +150,17 @@ sleep 15
 
 helm upgrade istio-base istio/base --install \
     --namespace istio-system \
-    --version 1.12.1 \
+    --version ${istio_version} \
     --create-namespace
 
 sleep 10
 
 helm upgrade istiod istio/istiod --install \
-	--version 1.12.1 \
+	--version ${istio_version} \
     --namespace istio-system
 
 helm upgrade istio-ingress istio/gateway --install \
-    --version 1.12.1 \
+    --version ${istio_version} \
     --namespace istio-ingress \
     --set service.type=None
 
@@ -237,4 +246,3 @@ spec:
 EOF
 
 # sudo mount bpffs /sys/fs/bpf -t bpf
-

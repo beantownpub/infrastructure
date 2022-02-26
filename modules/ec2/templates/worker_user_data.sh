@@ -62,6 +62,12 @@ discovery:
     apiServerEndpoint: "${control_ip}:6443"
     unsafeSkipCAVerification: true
 nodeRegistration: {}
+---
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+maxPods: 80
+providerID: ${cluster_name}
 EOF
 
 sudo kubeadm join \

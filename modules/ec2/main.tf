@@ -1,6 +1,7 @@
-#
-# Jalgraves 2021
-#
+# +-+-+-+-+ +-+-+-+-+-+-+-+-+-+ +-+-+-+-+
+# |*|*|*|*| |J|A|L|G|R|A|V|E|S| |*|*|*|*|
+# +-+-+-+-+ +-+-+-+-+-+-+-+-+-+ +-+-+-+-+
+# 2022
 
 data "aws_ami" "amazon_linux2" {
   most_recent = true
@@ -68,11 +69,13 @@ data "template_file" "init" {
   template = file("${path.module}/templates/user_data.sh")
 
   vars = {
-    cluster_name = var.cluster_name
-    domain_name  = var.domain_name
-    env          = var.env
-    k8s_token    = var.k8s_token
-    k8s_version  = var.k8s_version
+    cilium_version = local.app_versions.cilium
+    cluster_name   = var.cluster_name
+    domain_name    = var.domain_name
+    env            = var.env
+    istio_version  = local.app_versions.istio
+    k8s_token      = var.k8s_token
+    k8s_version    = local.app_versions.k8s
   }
 }
 
@@ -84,4 +87,3 @@ data "template_file" "join" {
     control_ip = aws_instance.control.private_ip
   }
 }
-
