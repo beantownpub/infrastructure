@@ -1,5 +1,6 @@
 locals {
-  public_ipv4 = var.local_public_ip == null ? [] : ["${var.local_public_ip}/32"]
+  public_ipv4  = var.local_public_ip == null ? [] : ["${var.local_public_ip}/32"]
+  cluster_name = var.cluster_name == null ? "${var.env}-cluster" : var.cluster_name
 }
 
 variable "name" {

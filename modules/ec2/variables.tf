@@ -9,6 +9,7 @@ locals {
     istio  = "1.12.1"
     k8s    = "1.23.0"
   }
+  cluster_name = var.cluster_name == null ? "${var.env}-cluster" : var.cluster_name
 }
 variable "ami" {
   default = null
@@ -26,8 +27,8 @@ variable "domain_name" {}
 
 variable "cluster_name" {
   type        = string
-  description = ""
-  default     = "jalgraves-cluster"
+  description = "Name of the K8s cluster"
+  default     = null
 }
 variable "private_subnets" {
   default = []

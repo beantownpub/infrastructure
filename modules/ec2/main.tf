@@ -32,8 +32,8 @@ resource "aws_instance" "control" {
   key_name                    = aws_key_pair.control.key_name
   subnet_id                   = var.subnets[0]
   tags = {
-    "Name"                                      = var.control_name
-    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    "Name"                                        = var.control_name
+    "kubernetes.io/cluster/${local.cluster_name}" = "owned"
   }
 
   root_block_device {
@@ -52,8 +52,8 @@ resource "aws_instance" "worker" {
   key_name                    = aws_key_pair.control.key_name
   subnet_id                   = var.subnets[1]
   tags = {
-    "Name"                                      = var.worker_name
-    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    "Name"                                        = var.worker_name
+    "kubernetes.io/cluster/${local.cluster_name}" = "owned"
   }
 
   root_block_device {
@@ -70,7 +70,7 @@ data "template_file" "init" {
 
   vars = {
     cilium_version = local.app_versions.cilium
-    cluster_name   = var.cluster_name
+    cluster_name   = local.cluster_name
     domain_name    = var.domain_name
     env            = var.env
     istio_version  = local.app_versions.istio
@@ -83,7 +83,8 @@ data "template_file" "join" {
   template = file("${path.module}/templates/worker_user_data.sh")
 
   vars = {
-    k8s_token  = var.k8s_token
-    control_ip = aws_instance.control.private_ip
+    k8s_token    = var.k8s_token
+    cluster_name = local.cluster_name
+    control_ip   = aws_instance.control.private_ip
   }
 }
