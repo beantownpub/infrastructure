@@ -53,13 +53,13 @@ pilot/plan:
 pilot/apply:
 	cd pilot/ && \
 		terraform workspace select pilot && \
-		aws-vault exec $(profile) -- terraform apply -compact-warnings -var-file=$(var_file)
+		aws-vault exec $(profile) -- terraform apply -compact-warnings
 
 ## Destroy pilot resources
 pilot/destroy:
 	cd pilot/ && \
 		terraform workspace select pilot && \
-		aws-vault exec $(profile) -- terraform destroy -var-file=$(var_file)
+		aws-vault exec $(profile) -- terraform destroy
 
 ## Run terraform init in prod/
 prod/init:

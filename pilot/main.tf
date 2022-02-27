@@ -35,8 +35,13 @@ locals {
   cluster_name = "${local.env}-${local.region_code}-jalgraves"
   env          = module.labels.environment
   region_code  = module.labels.region_code
-  subnet_tags = {
+  public_subnet_tags = {
     "kubernetes.io/cluster/${local.cluster_name}" = "owned"
+    "kubernetes.io/elb"                           = "1"
+  }
+  private_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "owned"
+    "kubernetes.io/internal-elb"                  = "1"
   }
   tags = {
     "Module"      = "terraform-aws-network",
@@ -58,8 +63,8 @@ module "network" {
   label_create_enabled            = true
   nat_gateway_enabled             = false
   nat_instance_enabled            = false
-  private_subnets_additional_tags = local.subnet_tags
-  public_subnets_additional_tags  = local.subnet_tags
+  private_subnets_additional_tags = local.private_subnet_tags
+  public_subnets_additional_tags  = local.public_subnet_tags
   region_code                     = local.region_code
   tags                            = local.tags
 }

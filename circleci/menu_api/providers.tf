@@ -20,7 +20,6 @@ terraform {
 }
 
 provider "circleci" {
-  token        = "da2d84c302c86591a38901ac3e1cc827cd98378b"
   vcs_type     = "github"
   organization = "beantownpub"
 }

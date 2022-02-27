@@ -70,6 +70,7 @@ resource "aws_iam_policy" "worker_policy" {
         "Effect" : "Allow",
         "Action" : [
           "ec2:*",
+          "elasticloadbalancing:*",
           "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",

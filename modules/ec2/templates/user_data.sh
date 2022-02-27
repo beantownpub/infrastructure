@@ -1,12 +1,9 @@
 #!/bin/bash
 
-LOG=/home/ec2-user/bootstrap_log.txt
-printf "Current Dir: %s\n" "$(pwd)" >> /home/ec2-user/bootstrap_log.txt
-printf "Current User: %s\n" "$(whoami)" >> /home/ec2-user/bootstrap_log.txt
-printf "Log Dir: %s\n" "$${LOG}" >> /home/ec2-user/bootstrap_log.txt
+# Log output available on instance in /var/log/cloud-init-output.log
 
-sudo yum update -y || printf "Error updating Yum\n" >> /home/ec2-user/bootstrap_log.txt
-sudo yum install -y bind-utils git iproute-tc jq nmap || printf "Error install packages\n" >> /home/ec2-user/bootstrap_log.txt
+sudo yum update -y
+sudo yum install -y bind-utils git iproute-tc jq nmap
 
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 br_netfilter
@@ -17,9 +14,10 @@ net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 EOF
 
-printf "\nInstalling Docker\n" >> /home/ec2-user/bootstrap_log.txt
+printf "\nInstalling Docker\n"
+
 sudo sysctl --system
-sudo amazon-linux-extras install -y docker || printf "Error installing Docker\n" >> /home/ec2-user/bootstrap_log.txt
+sudo amazon-linux-extras install -y docker
 
 sudo mkdir /etc/docker
 cat <<EOF | sudo tee /etc/docker/daemon.json
@@ -34,7 +32,7 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 EOF
 
 sudo service docker start
-sudo usermod -a -G docker ec2-user || printf "Error updating docker perms\n" >> /home/ec2-user/bootstrap_log.txt
+sudo usermod -a -G docker ec2-user
 sudo systemctl enable --now docker
 sudo systemctl daemon-reload
 sudo systemctl restart docker
@@ -53,19 +51,19 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cl
 exclude=kubelet kubeadm kubectl
 EOF
 
-printf "\nInstalling K8s Components\n" >> /home/ec2-user/bootstrap_log.txt
+printf "\nInstalling K8s Components\n"
 
 sudo yum install -y \
     kubelet \
     kubeadm \
     kubectl \
-    --disableexcludes=kubernetes || printf "Error installing K8s Components\n" >> /home/ec2-user/bootstrap_log.txt
+    --disableexcludes=kubernetes
 
 sudo systemctl enable --now kubelet
 
-printf "\nInitializing K8s Cluster\n" >> /home/ec2-user/bootstrap_log.txt
+printf "\nInitializing K8s Cluster\n"
 
-sudo systemctl enable kubelet.service || printf "Error kubelet.service\n" >> /home/ec2-user/bootstrap_log.txt
+sudo systemctl enable kubelet.service
 
 mkdir -p /home/ec2-user/manifests
 
@@ -78,8 +76,6 @@ bootstrapTokens:
 localAPIEndpoint:
   bindPort: 6443
 nodeRegistration:
-  kubeletExtraArgs:
-    cloud-provider: "external"
   criSocket: /var/run/dockershim.sock
   imagePullPolicy: IfNotPresent
   taints:
@@ -96,10 +92,7 @@ apiServer:
     cloud-provider: external
 certificatesDir: /etc/kubernetes/pki
 clusterName: ${cluster_name}
-controllerManager:
-  extraArgs:
-    cloud-provider: external
-    external-cloud-volume-plugin: aws
+controllerManager: {}
 dns: {}
 etcd:
   local:
@@ -111,13 +104,13 @@ networking:
   serviceSubnet: 10.96.0.0/12
 scheduler: {}
 ---
-apiVersion: kubelet.config.k8s.io/v1alpha1
+apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
 providerID: ${cluster_name}
 EOF
 
 sudo kubeadm init \
-    --config /home/ec2-user/manifests/cluster-config.yaml || printf "Error initializing cluster\n" >> /home/ec2-user/bootstrap_log.txt
+    --config /home/ec2-user/manifests/cluster-config.yaml
 
 mkdir -p "$${HOME}/.kube"
 mkdir /home/ec2-user/.kube
@@ -135,19 +128,24 @@ kubectl create ns "${env}" && \
 kubectl create ns istio-ingress && \
 		kubectl label namespace istio-ingress istio-injection=enabled
 
+printf "\nAdding Helm Repos\n"
+
 helm repo add cilium https://helm.cilium.io/ && \
     helm repo add istio https://istio-release.storage.googleapis.com/charts && \
 	helm repo add jetstack https://charts.jetstack.io &&
-    helm repo add beantown https://beantownpub.github.io/helm/
+    helm repo add beantown https://beantownpub.github.io/helm/ && \
+    helm repo add aws-ccm https://kubernetes.github.io/cloud-provider-aws && \
+    helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver && \
     helm repo update
+
+printf "\nInstalling Cilium CNI\n"
 
 helm upgrade cilium cilium/cilium --install \
     --version ${cilium_version} \
     --namespace kube-system --reuse-values \
     --set hubble.relay.enabled=true \
     --set hubble.ui.enabled=true \
-    --set ipam.operator.clusterPoolIPv4PodCIDR="10.7.0.0/16"\
-    --debug
+    --set ipam.operator.clusterPoolIPv4PodCIDR="10.7.0.0/16"
 
 sleep 15
 
@@ -248,10 +246,54 @@ spec:
         host: "hubble-ui.kube-system.svc.cluster.local"
 EOF
 
-helm repo add aws-ccm https://kubernetes.github.io/cloud-provider-aws
+printf "\nInstalling Cloud Controller Manager\n"
 
 helm upgrade aws-ccm aws-ccm/aws-cloud-controller-manager \
     --install \
-    --set args="{--cloud-provider=aws,--v=2,--cluster-cidr=10.96.0.0/12,--cluster-name=${cluster_name}}"
+    --set args="{\
+        --enable-leader-migration=true,\
+        --cloud-provider=aws,\
+        --v=2,\
+        --cluster-cidr=10.96.0.0/12,\
+        --cluster-name=${cluster_name},\
+        --external-cloud-volume-plugin=aws,\
+        --configure-cloud-routes=false\
+    }"
 
-# sudo mount bpffs /sys/fs/bpf -t bpf
+printf "\nInstalling EBS CSI Driver\n"
+
+helm upgrade --install aws-ebs-csi-driver \
+    --namespace kube-system \
+    aws-ebs-csi-driver/aws-ebs-csi-driver
+
+
+kubectl apply -f - <<EOF
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: aws
+provisioner: ebs.csi.aws.com
+parameters:
+  type: standard
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+mountOptions:
+  - debug
+volumeBindingMode: WaitForFirstConsumer
+EOF
+
+kubectl create -n kube-system sa jalbot
+
+kubectl apply -f - <<EOF
+kind: ClusterRoleBinding
+metadata:
+  name: jalbot-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: jalbot
+  namespace: kube-system
+EOF
