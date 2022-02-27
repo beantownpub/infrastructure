@@ -20,6 +20,7 @@ terraform {
 }
 
 provider "circleci" {
+  token        = var.api_token
   vcs_type     = "github"
   organization = "beantownpub"
 }
