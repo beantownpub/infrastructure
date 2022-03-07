@@ -10,6 +10,7 @@ locals {
     k8s    = "1.23.0"
   }
   cluster_name = var.cluster_name == null ? "${var.env}-cluster" : var.cluster_name
+  k8s_server   = "k8s.${var.env}.${var.domain}"
 }
 variable "ami" {
   default = null
@@ -29,6 +30,12 @@ variable "cluster_name" {
   type        = string
   description = "Name of the K8s cluster"
   default     = null
+}
+variable "cluster_cidr" {
+  default = "10.96.0.0/12"
+}
+variable "domain" {
+  default = "beantownpub.com"
 }
 variable "private_subnets" {
   default = []

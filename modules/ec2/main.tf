@@ -71,9 +71,11 @@ data "template_file" "init" {
   vars = {
     cilium_version = local.app_versions.cilium
     cluster_name   = local.cluster_name
+    cluster_cidr   = var.cluster_cidr
     domain_name    = var.domain_name
     env            = var.env
     istio_version  = local.app_versions.istio
+    k8s_server     = local.k8s_server
     k8s_token      = var.k8s_token
     k8s_version    = local.app_versions.k8s
   }

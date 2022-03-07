@@ -25,3 +25,57 @@ resource "tfe_variable" "slack_webhook_url" {
   description  = "Slack webhook URL"
   sensitive    = true
 }
+
+resource "tfe_variable" "merch_api_db_host" {
+  key          = "merch_api_db_host"
+  value        = var.merch_api_db_host
+  category     = "terraform"
+  workspace_id = data.tfe_workspace.tfc.id
+  description  = "Merch API DB host"
+  sensitive    = true
+}
+
+resource "tfe_variable" "merch_api_db_username" {
+  key          = "merch_api_db_username"
+  value        = var.merch_api_db_username
+  category     = "terraform"
+  workspace_id = data.tfe_workspace.tfc.id
+  description  = "Merch API DB username"
+  sensitive    = true
+}
+
+resource "tfe_variable" "merch_api_db_password" {
+  key          = "merch_api_db_password"
+  value        = var.merch_api_db_password
+  category     = "terraform"
+  workspace_id = data.tfe_workspace.tfc.id
+  description  = "Merch API DB password"
+  sensitive    = true
+}
+
+resource "tfe_variable" "merch_api_db_name" {
+  key          = "merch_api_db_name"
+  value        = var.merch_api_db_name
+  category     = "terraform"
+  workspace_id = data.tfe_workspace.tfc.id
+  description  = "Merch API DB name"
+  sensitive    = true
+}
+
+resource "tfe_variable" "merch_api_username" {
+  key          = "merch_api_username"
+  value        = var.merch_api_username
+  category     = "terraform"
+  workspace_id = data.tfe_workspace.tfc.id
+  description  = "Merch API username"
+  sensitive    = true
+}
+
+resource "tfe_variable" "merch_api_password" {
+  key          = "merch_api_password"
+  value        = var.merch_api_password
+  category     = "terraform"
+  workspace_id = data.tfe_workspace.tfc.id
+  description  = "Merch API password"
+  sensitive    = true
+}

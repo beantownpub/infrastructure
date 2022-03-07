@@ -36,6 +36,38 @@ output "docker" {
   sensitive = true
 }
 
+output "databases" {
+  value = {
+    merch_api = {
+      host     = var.merch_api_db_host
+      name     = var.merch_api_db_name
+      username = var.merch_api_db_username
+      password = var.merch_api_db_password
+    },
+    menu_api = {
+      host     = var.menu_api_db_host
+      name     = var.menu_api_db_name
+      username = var.menu_api_db_username
+      password = var.menu_api_db_password
+    }
+  }
+  sensitive = true
+}
+
+output "api_creds" {
+  value = {
+    merch_api = {
+      username = var.merch_api_username
+      password = var.merch_api_password
+    },
+    menu_api = {
+      username = var.menu_api_username
+      password = var.menu_api_password
+    }
+  }
+  sensitive = true
+}
+
 output "slack" {
   value = {
     webhook_url = var.slack_webhook_url

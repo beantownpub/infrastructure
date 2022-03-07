@@ -165,87 +165,6 @@ helm upgrade istio-ingress istio/gateway --install \
     --namespace istio-ingress \
     --set service.type=None
 
-
-kubectl apply -n istio-ingress -f - <<EOF
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: istio-ingress
-    istio: ingress
-  name: istio-ingress
-spec:
-  ports:
-  - name: status-port
-    nodePort: 32382
-    port: 15021
-    protocol: TCP
-    targetPort: 15021
-  - name: http2
-    nodePort: 30080
-    port: 80
-    protocol: TCP
-    targetPort: 80
-  - name: https
-    nodePort: 30443
-    port: 443
-    protocol: TCP
-    targetPort: 443
-  selector:
-    app: istio-ingress
-    istio: ingress
-  sessionAffinity: None
-  type: NodePort
-EOF
-
-kubectl apply -n istio-ingress -f - <<EOF
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: web-gateway
-  namespace: istio-ingress
-spec:
-  selector:
-    app: istio-ingress
-  servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - "${domain_name}"
-    - "*.${domain_name}"
-    - "*.${env}.${domain_name}"
-    - "thehubpub.com"
-    - "*.${env}.thehubpub.com"
-    - "www.thehubpub.com"
-    - "drdavisicecream.com"
-    - "www.drdavisicecream.com"
-    - "wavelengths-brookline.com"
-    - "www.wavelengths-brookline.com"
-    - "*.jalgraves.com"
-EOF
-
-kubectl apply -n kube-system -f - <<EOF
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: hubble
-spec:
-  hosts:
-  - "hubble.${env}.${domain_name}"
-
-  gateways:
-  - istio-ingress/web-gateway
-  - mesh # applies to all the sidecars in the mesh
-  http:
-  - route:
-    - destination:
-        port:
-          number: 80
-        host: "hubble-ui.kube-system.svc.cluster.local"
-EOF
-
 printf "\nInstalling Cloud Controller Manager\n"
 
 helm upgrade aws-ccm aws-ccm/aws-cloud-controller-manager \
@@ -254,7 +173,7 @@ helm upgrade aws-ccm aws-ccm/aws-cloud-controller-manager \
         --enable-leader-migration=true,\
         --cloud-provider=aws,\
         --v=2,\
-        --cluster-cidr=10.96.0.0/12,\
+        --cluster-cidr=${cluster_cidr},\
         --cluster-name=${cluster_name},\
         --external-cloud-volume-plugin=aws,\
         --configure-cloud-routes=false\
@@ -285,6 +204,7 @@ EOF
 kubectl create -n kube-system sa jalbot
 
 kubectl apply -f - <<EOF
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: jalbot-admin
@@ -297,3 +217,18 @@ subjects:
   name: jalbot
   namespace: kube-system
 EOF
+
+TOKEN_NAME=$(kubectl -n kube-system get sa jalbot -o json | jq '.secrets[0].name' | tr -d '"')
+TOKEN=$(kubectl -n kube-system get secret $${TOKEN_NAME} -o jsonpath='{.data.token}'| base64 --decode)
+
+helm upgrade --install default-ingress beantown/default-ingress \
+    --namespace istio-ingress \
+    --set global.env=$(env) \
+    --set domain=$(domain) \
+    --debug
+
+kubectl config set-credentials jalbot --token="$${TOKEN}"
+kubectl config set-cluster ${cluster_name} --server=${k8s_server} --insecure-skip-tls-verify=true
+kubectl config set-context jalbot --cluster=${cluster_name} --user=jalbot
+kubectl config use-context jalbot
+kubectl config view
