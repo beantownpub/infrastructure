@@ -12,7 +12,7 @@ resource "tfe_workspace" "prod" {
   queue_all_runs        = true
   speculative_enabled   = true
   tag_names             = ["prod"]
-  terraform_version     = "1.1.3"
+  terraform_version     = var.terraform_version
   working_directory     = "prod"
   vcs_repo {
     branch             = "master"

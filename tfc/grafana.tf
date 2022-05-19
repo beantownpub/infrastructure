@@ -13,7 +13,7 @@ resource "tfe_workspace" "grafana" {
   queue_all_runs        = true
   speculative_enabled   = true
   tag_names             = ["grafana"]
-  terraform_version     = "1.1.7"
+  terraform_version     = var.terraform_version
   trigger_prefixes      = ["grafana/"]
   working_directory     = "grafana/"
 }

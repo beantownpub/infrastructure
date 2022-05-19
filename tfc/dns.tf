@@ -12,7 +12,7 @@ resource "tfe_workspace" "dns" {
   queue_all_runs        = true
   speculative_enabled   = true
   tag_names             = ["dns"]
-  terraform_version     = "1.1.7"
+  terraform_version     = var.terraform_version
   working_directory     = "dns"
 }
 

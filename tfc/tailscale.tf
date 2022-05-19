@@ -13,7 +13,7 @@ resource "tfe_workspace" "tailscale" {
   queue_all_runs        = true
   speculative_enabled   = true
   tag_names             = ["tailscale"]
-  terraform_version     = "1.1.3"
+  terraform_version     = var.terraform_version
   trigger_prefixes      = ["tailscale/"]
   working_directory     = "tailscale/"
 }

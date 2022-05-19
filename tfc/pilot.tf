@@ -9,7 +9,7 @@ resource "tfe_workspace" "pilot" {
   organization      = tfe_organization.beantown.name
   execution_mode    = "remote"
   tag_names         = ["pilot"]
-  terraform_version = "1.1.3"
+  terraform_version = var.terraform_version
   working_directory = "pilot"
   vcs_repo {
     branch             = "master"

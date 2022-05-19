@@ -3,6 +3,9 @@
 # +-+-+-+-+ +-+-+-+-+-+-+-+-+-+ +-+-+-+-+
 # 2022
 
+variable "terraform_version" {
+  default = "1.1.7"
+}
 variable "admin_circleci_api_token" {}
 variable "aws_access_key_id" {}
 variable "aws_secret_access_key" {}
