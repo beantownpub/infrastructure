@@ -97,3 +97,12 @@ resource "tfe_variable" "pilot_ns1_api_key" {
   description  = "NS1 API key for creating DNS records"
   sensitive    = true
 }
+
+resource "tfe_notification_configuration" "pilot" {
+  name             = "pilot-notification-configuration"
+  enabled          = true
+  destination_type = "slack"
+  triggers         = ["run:errored", "run:needs_attention", "run:completed"]
+  url              = var.slack_webhook_url
+  workspace_id     = tfe_workspace.pilot.id
+}

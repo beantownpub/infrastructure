@@ -6,6 +6,7 @@
 variable "admin_circleci_api_token" {}
 variable "aws_access_key_id" {}
 variable "aws_secret_access_key" {}
+variable "aws_account_id" {}
 variable "beantown_circleci_api_token" {}
 variable "circleci_api_token" {}
 variable "dev_k8s_token" {}
@@ -16,6 +17,9 @@ variable "docker_username" {}
 variable "email_recipient" {}
 variable "github_oauth_token" {}
 variable "google_api_key" {}
+variable "grafana_api_key" {}
+variable "grafana_aws_account_id" {}
+variable "grafana_aws_external_id" {}
 variable "helm_repo" {}
 variable "jalbot_token" {}
 variable "k8s_server" {}

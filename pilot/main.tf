@@ -85,16 +85,17 @@ module "security" {
 module "ec2" {
   source = "../modules/ec2"
 
-  cluster_name    = local.cluster_name
-  control_name    = module.labels.ec2_control.name
-  domain_name     = var.dns_zone
-  env             = local.env
-  k8s_token       = var.k8s_token
-  public_key      = var.public_key
-  region_code     = local.region_code
-  subnets         = module.network.public_subnet_ids
-  security_groups = [module.security.internal_cluster_traffic.id, module.security.local_machine_traffic.id]
-  worker_name     = module.labels.ec2_worker.name
+  cluster_name      = local.cluster_name
+  control_name      = module.labels.ec2_control.name
+  domain_name       = var.dns_zone
+  env               = local.env
+  k8s_token         = var.k8s_token
+  public_key        = var.public_key
+  region_code       = local.region_code
+  subnets           = module.network.public_subnet_ids
+  security_groups   = [module.security.internal_cluster_traffic.id, module.security.local_machine_traffic.id]
+  target_group_arns = [module.alb.target_group_arn]
+  worker_name       = module.labels.ec2_worker.name
 }
 
 

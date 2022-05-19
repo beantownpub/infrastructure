@@ -221,14 +221,10 @@ EOF
 TOKEN_NAME=$(kubectl -n kube-system get sa jalbot -o json | jq '.secrets[0].name' | tr -d '"')
 TOKEN=$(kubectl -n kube-system get secret $${TOKEN_NAME} -o jsonpath='{.data.token}'| base64 --decode)
 
+echo "$${TOKEN}" > /home/ec2-user/jalbot_token.txt
+
 helm upgrade --install default-ingress beantown/default-ingress \
     --namespace istio-ingress \
     --set global.env=$(env) \
     --set domain=$(domain) \
     --debug
-
-kubectl config set-credentials jalbot --token="$${TOKEN}"
-kubectl config set-cluster ${cluster_name} --server=${k8s_server} --insecure-skip-tls-verify=true
-kubectl config set-context jalbot --cluster=${cluster_name} --user=jalbot
-kubectl config use-context jalbot
-kubectl config view

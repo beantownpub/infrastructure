@@ -62,4 +62,7 @@ variable "env" {}
 
 variable "k8s_token" {}
 variable "public_key" {}
+variable "target_group_arns" {
+  default = []
+}
 variable "worker_name" {}
