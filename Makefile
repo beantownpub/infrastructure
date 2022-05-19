@@ -53,7 +53,7 @@ pilot/plan:
 pilot/apply:
 	cd pilot/ && \
 		terraform workspace select pilot && \
-		aws-vault exec $(profile) -- terraform apply -compact-warnings
+		aws-vault exec $(profile) -- terraform apply -compact-warnings -var-file=$(var_file)
 
 ## Destroy pilot resources
 pilot/destroy:

@@ -26,6 +26,7 @@ resource "aws_autoscaling_group" "workers" {
   max_size             = 2
   target_group_arns    = var.target_group_arns
   termination_policies = ["OldestInstance"]
+  vpc_zone_identifier  = var.subnets
 
   lifecycle {
     create_before_destroy = true
