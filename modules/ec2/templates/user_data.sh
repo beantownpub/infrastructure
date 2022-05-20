@@ -76,7 +76,7 @@ bootstrapTokens:
 localAPIEndpoint:
   bindPort: 6443
 nodeRegistration:
-  criSocket: /var/run/dockershim.sock
+  criSocket: "unix:/run/containerd/containerd.sock"
   imagePullPolicy: IfNotPresent
   taints:
   - effect: NoSchedule
