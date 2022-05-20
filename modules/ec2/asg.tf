@@ -6,9 +6,10 @@
 resource "aws_launch_configuration" "worker" {
   name_prefix          = "worker-"
   image_id             = var.ami == null ? data.aws_ami.amazon_linux2.id : var.ami
-  instance_type        = "t2.micro"
+  instance_type        = "t3.medium"
   security_groups      = var.security_groups
   iam_instance_profile = "K8sWorker"
+  user_data            = data.template_file.join.rendered
   key_name             = aws_key_pair.control.key_name
   lifecycle {
     create_before_destroy = true
