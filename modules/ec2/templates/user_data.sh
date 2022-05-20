@@ -202,6 +202,17 @@ volumeBindingMode: WaitForFirstConsumer
 EOF
 
 kubectl create -n kube-system sa jalbot
+kubectl create -n kube-system token jalbot
+
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: jalbot
+  annotations:
+    kubernetes.io/service-account.name: "jalbot"
+EOF
 
 kubectl apply -f - <<EOF
 apiVersion: rbac.authorization.k8s.io/v1
@@ -218,17 +229,13 @@ subjects:
   namespace: kube-system
 EOF
 
-TOKEN_NAME=$(kubectl -n kube-system get sa jalbot -o json | jq '.secrets[0].name' | tr -d '"')
-TOKEN=$(kubectl -n kube-system get secret $${TOKEN_NAME} -o jsonpath='{.data.token}'| base64 --decode)
+# TOKEN_NAME=$(kubectl -n kube-system get sa jalbot -o json | jq '.secrets[0].name' | tr -d '"')
+TOKEN=$(kubectl -n kube-system get secret jalbot -o jsonpath='{.data.token}'| base64 --decode)
 
 echo "$${TOKEN}" > /home/ec2-user/jalbot_token.txt
 
 helm upgrade --install default-ingress beantown/default-ingress \
     --namespace istio-ingress \
-    --set global.env=$(env) \
-    --set domain=$(domain) \
+    --set global.env=${env} \
+    --set domain=${domain} \
     --debug
-
-curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8/devel:kubic:libcontainers:stable.repo
-curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo
-yum install cri-o
