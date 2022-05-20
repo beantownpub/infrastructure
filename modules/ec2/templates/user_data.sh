@@ -237,5 +237,5 @@ echo "$${TOKEN}" > /home/ec2-user/jalbot_token.txt
 helm upgrade --install default-ingress beantown/default-ingress \
     --namespace istio-ingress \
     --set global.env=${env} \
-    --set domain=${domain} \
+    --set domain=${domain_name} \
     --debug
