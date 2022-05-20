@@ -19,7 +19,7 @@ printf "\nInstalling Docker\n"
 sudo sysctl --system
 sudo amazon-linux-extras install -y docker
 
-sudo mkdir /etc/docker
+sudo mkdir -p /etc/docker
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
     "exec-opts": ["native.cgroupdriver=systemd"],
@@ -48,6 +48,7 @@ enabled=1
 gpgcheck=0
 repo_gpgcheck=0
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kubelet kubeadm kubectl
 EOF
 
 printf "\nInstalling K8s Components\n"
@@ -227,3 +228,7 @@ helm upgrade --install default-ingress beantown/default-ingress \
     --set global.env=$(env) \
     --set domain=$(domain) \
     --debug
+
+curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8/devel:kubic:libcontainers:stable.repo
+curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo
+yum install cri-o

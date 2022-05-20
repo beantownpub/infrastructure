@@ -7,7 +7,7 @@ locals {
   app_versions = {
     cilium = "1.10.5"
     istio  = "1.12.1"
-    k8s    = "1.23.0"
+    k8s    = var.k8s_version == null ? "1.24.0" : var.k8s_version
   }
   cluster_name = var.cluster_name == null ? "${var.env}-cluster" : var.cluster_name
   k8s_server   = "k8s.${var.env}.${var.domain}"
@@ -36,6 +36,10 @@ variable "cluster_cidr" {
 }
 variable "domain" {
   default = "beantownpub.com"
+}
+
+variable "k8s_version" {
+  default = null
 }
 variable "private_subnets" {
   default = []
