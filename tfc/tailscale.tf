@@ -18,15 +18,6 @@ resource "tfe_workspace" "tailscale" {
   working_directory     = "tailscale/"
 }
 
-resource "tfe_variable" "tailscale_api_key" {
-  key          = "tailscale_api_key"
-  value        = var.tailscale_api_key
-  category     = "terraform"
-  workspace_id = tfe_workspace.tailscale.id
-  description  = "Tailscale API Key"
-  sensitive    = true
-}
-
 resource "tfe_variable" "vpc_id" {
   key          = "vpc_id"
   value        = var.vpc_id

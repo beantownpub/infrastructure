@@ -4,9 +4,9 @@
 # 2022
 
 resource "aws_security_group" "tailscale" {
-  name        = "tailscale-sg"
-  description = "Allow tailscale relay vpc inbound traffic"
-  vpc_id      = data.aws_vpc.main.id
+  name        = "tailscale-subnet-router"
+  description = "Allow tailscale-subnet-router vpc inbound traffic"
+  vpc_id      = var.vpc_id
 
   # Allow egress to the internet
   egress {
@@ -18,5 +18,7 @@ resource "aws_security_group" "tailscale" {
 
   tags = {
     Provisioner = "Terraform"
+    Name        = "tailscale-subnet-router"
+    Role        = "vpn"
   }
 }

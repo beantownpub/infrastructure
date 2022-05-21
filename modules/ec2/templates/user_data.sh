@@ -204,7 +204,7 @@ EOF
 kubectl create -n kube-system sa jalbot
 kubectl create -n kube-system token jalbot
 
-kubectl apply -f - <<EOF
+kubectl apply -n kube-system -f - <<EOF
 apiVersion: v1
 kind: Secret
 type: kubernetes.io/service-account-token

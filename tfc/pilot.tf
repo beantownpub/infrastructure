@@ -98,6 +98,15 @@ resource "tfe_variable" "pilot_ns1_api_key" {
   sensitive    = true
 }
 
+resource "tfe_variable" "tailscale_api_key" {
+  key          = "tailscale_api_key"
+  value        = var.tailscale_api_key
+  category     = "terraform"
+  workspace_id = tfe_workspace.pilot.id
+  description  = "Tailscale API Key"
+  sensitive    = true
+}
+
 resource "tfe_notification_configuration" "pilot" {
   name             = "pilot-notification-configuration"
   enabled          = true

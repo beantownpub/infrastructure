@@ -45,7 +45,7 @@ locals {
   }
   tags = {
     "Module"      = "terraform-aws-network",
-    "Provisioner" = "Terraform"
+    "Provisioner" = "terraform"
   }
 }
 
@@ -61,7 +61,7 @@ module "network" {
   cidr_block                      = "10.0.0.0/16"
   internet_gateway_enabled        = true
   label_create_enabled            = true
-  nat_gateway_enabled             = false
+  nat_gateway_enabled             = true
   nat_instance_enabled            = false
   private_subnets_additional_tags = local.private_subnet_tags
   public_subnets_additional_tags  = local.public_subnet_tags
@@ -96,6 +96,18 @@ module "ec2" {
   security_groups   = [module.security.internal_cluster_traffic.id, module.security.local_machine_traffic.id]
   target_group_arns = [module.alb.target_group_arn]
   worker_name       = module.labels.ec2_worker.name
+}
+
+module "tailscale" {
+  source = "../modules/tailscale"
+
+  public_key           = var.public_key
+  region_code          = "use2"
+  security_group_ids   = [module.security.internal_cluster_traffic.id, module.security.local_machine_traffic.id]
+  subnets              = module.network.private_subnet_ids
+  subnets_to_advertise = join(",", module.network.private_subnet_cidrs)
+  tailscale_auth_key   = var.tailscale_api_key
+  vpc_id               = module.network.vpc_id
 }
 
 
